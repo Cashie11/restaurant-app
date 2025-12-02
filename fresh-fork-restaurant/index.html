@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light" data-pwa="true">
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover">
+
+    <!-- SEO Meta Tags -->
+    <title>Fresh Fork | Restaurant Ordering System</title>
+    <meta name="description" content="Fresh Fork - Modern restaurant ordering system with fresh food, fast delivery, and real-time order tracking">
+    <meta name="keywords" content="restaurant, food ordering, delivery, fresh food, online menu, order tracking, real-time">
+    <meta name="author" content="Fresh Fork Team">
+
+    <!-- Webmanifest + Favicon / App icons -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="assets/app-icons/icon-32x32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="assets/app-icons/icon-180x180.png">
+
+    <!-- Theme switcher (color modes) -->
+    <script src="assets/js/theme-switcher.js"></script>
+
+    <!-- Preloaded local web font (Inter) -->
+    <link rel="preload" href="assets/fonts/inter-variable-latin.woff2" as="font" type="font/woff2" crossorigin>
+
+    <!-- Font icons -->
+    <link rel="preload" href="assets/icons/cartzilla-icons.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="assets/icons/cartzilla-icons.min.css">
+
+    <!-- Vendor styles -->
+    <link rel="stylesheet" href="assets/vendor/swiper/swiper-bundle.min.css">
+    <link rel="stylesheet" href="assets/vendor/simplebar/dist/simplebar.min.css">
+    <link rel="stylesheet" href="assets/vendor/choices.js/public/assets/styles/choices.min.css">
+    <link rel="stylesheet" href="assets/vendor/glightbox/dist/css/glightbox.min.css">
+
+    <!-- Bootstrap + Theme styles -->
+    <link rel="preload" href="assets/css/theme.min.css" as="style">
+    <link rel="preload" href="assets/css/theme.rtl.min.css" as="style">
+    <link rel="stylesheet" href="assets/css/theme.min.css" id="theme-styles">
+    
+    <!-- Custom Fresh Fork styles -->
+    <style>
+      :root {
+        --fresh-green: #10b981;
+        --fresh-dark: #064e3b;
+        --fresh-light: #d1fae5;
+      }
+      
+      .fresh-green {
+        color: var(--fresh-green) !important;
+      }
+      
+      .bg-fresh-green {
+        background-color: var(--fresh-green) !important;
+      }
+      
+      .bg-fresh-dark {
+        background-color: var(--fresh-dark) !important;
+      }
+      
+      .btn-fresh {
+        background-color: var(--fresh-green);
+        border-color: var(--fresh-green);
+        color: white;
+      }
+      
+      .btn-fresh:hover {
+        background-color: #059669;
+        border-color: #059669;
+        color: white;
+      }
+      
+      .text-fresh-dark {
+        color: var(--fresh-dark) !important;
+      }
+      
+      .border-fresh-green {
+        border-color: var(--fresh-green) !important;
+      }
+      
+      .hero-section {
+        background: linear-gradient(135deg, var(--fresh-dark) 0%, var(--fresh-green) 100%);
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .hero-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('assets/img/restaurant-pattern.png') repeat;
+        opacity: 0.1;
+      }
+    </style>
+  </head>
+
+  <!-- Body -->
+  <body>
+
+    <!-- Shopping cart offcanvas -->
+    <div class="offcanvas offcanvas-end pb-sm-2 px-sm-2" id="shoppingCart" tabindex="-1" aria-labelledby="shoppingCartLabel" style="width: 500px">
+
+      <!-- Header -->
+      <div class="offcanvas-header flex-column align-items-start py-3 pt-lg-4">
+        <div class="d-flex align-items-center justify-content-between w-100 mb-3 mb-lg-4">
+          <h4 class="offcanvas-title" id="shoppingCartLabel">Your Order</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="alert alert-success text-dark-emphasis fs-sm border-0 rounded-4 mb-0" role="alert">
+          🎉 <span class="fw-semibold">Free delivery</span> for orders over $50!
+        </div>
+      </div>
+
+      <!-- Items -->
+      <div class="offcanvas-body d-flex flex-column gap-4 pt-2">
+        <div class="py-4 text-center">
+          <i class="ci-utensils fs-1 text-muted mb-3"></i>
+          <h6 class="mb-2">Your cart is empty</h6>
+          <p class="text-muted fs-sm">Add some delicious items to get started!</p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="offcanvas-footer border-top d-none">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <span class="fw-semibold">Total:</span>
+          <span class="h3 mb-0 fw-bold fresh-green">$0.00</span>
+        </div>
+        <button type="button" class="btn btn-fresh btn-lg w-100">
+          <i class="ci-lock me-2"></i>Checkout
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu sidebar (offcanvas) -->
+    <nav class="offcanvas offcanvas-start" id="navbarNav" tabindex="-1" aria-labelledby="navbarNavLabel">
+      <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="navbarNavLabel">Browse Fresh Fork</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+
+      <!-- Navbar nav -->
+      <div class="offcanvas-body">
+        <ul class="navbar-nav">
+          <li class="nav-item active">
+            <a class="nav-link" href="index.html">
+              <i class="ci-home me-2"></i>Home
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="menu-fresh-fork.html">
+              <i class="ci-restaurant me-2"></i>Menu
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="about-fresh-fork.html">
+              <i class="ci-info-circle me-2"></i>About
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="contact-fresh-fork.html">
+              <i class="ci-phone me-2"></i>Contact
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="track-order-fresh-fork.html">
+              <i class="ci-package me-2"></i>Track Order
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main header: Desktop -->
+    <header class="navbar navbar-expand navbar-sticky sticky-top d-block bg-body z-fixed py-1 py-lg-0 py-xl-1 px-0" data-sticky-element>
+      <div class="container py-lg-2">
+        <div class="d-flex align-items-center">
+          <!-- Mobile menu toggle (hamburger) -->
+          <button type="button" class="navbar-toggler d-block flex-shrink-0 me-3 me-sm-4" data-bs-toggle="offcanvas" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <!-- Navbar brand (Logo) -->
+          <a class="navbar-brand fs-2 p-0 pe-lg-2 pe-xxl-0 me-0 me-sm-3 me-md-4 me-xxl-5" href="index.html">
+            <span class="fresh-green">🍴 Fresh Fork</span>
+          </a>
+
+          <!-- Desktop main menu -->
+          <ul class="navbar-nav d-none d-lg-flex me-auto order-lg-2">
+            <li class="nav-item active">
+              <a class="nav-link" href="index.html">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="menu-fresh-fork.html">Menu</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="about-fresh-fork.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="contact-fresh-fork.html">Contact</a>
+            </li>
+          </ul>
+
+          <!-- Header toolbar -->
+          <div class="d-flex align-items-center ms-auto">
+            <!-- Search toggle -->
+            <button type="button" class="btn btn-link btn-icon p-2 me-1 me-sm-3" data-bs-toggle="collapse" data-bs-target="#searchBox" aria-expanded="false" aria-controls="searchBox">
+              <i class="ci-search"></i>
+            </button>
+
+            <!-- Shopping cart toggle -->
+            <button type="button" class="btn btn-link btn-icon p-2 me-1 me-sm-3" data-bs-toggle="offcanvas" data-bs-target="#shoppingCart" aria-controls="shoppingCart">
+              <i class="ci-shopping-cart"></i>
+            </button>
+
+            <!-- User account -->
+            <div class="dropdown d-none d-sm-block">
+              <button type="button" class="btn btn-link btn-icon p-2" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="ci-user"></i>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="login-fresh-fork.html"><i class="ci-user me-2"></i>Sign In</a></li>
+                <li><a class="dropdown-item" href="register-fresh-fork.html"><i class="ci-user-plus me-2"></i>Sign Up</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="profile-fresh-fork.html"><i class="ci-settings me-2"></i>Profile Settings</a></li>
+                <li><a class="dropdown-item" href="orders-fresh-fork.html"><i class="ci-package me-2"></i>Order History</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search box (collapsible) -->
+        <div class="collapse" id="searchBox">
+          <div class="container py-2">
+            <div class="position-relative">
+              <input type="search" class="form-control pe-5" placeholder="Search menu items...">
+              <button type="button" class="btn btn-link btn-icon position-absolute top-50 end-0 translate-middle-y pe-3" data-bs-toggle="collapse" data-bs-target="#searchBox" aria-expanded="false" aria-controls="searchBox">
+                <i class="ci-close"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page content -->
+    <main class="content-wrapper">
+
+      <!-- Hero Section -->
+      <section class="hero-section text-white py-5 py-lg-7">
+        <div class="container position-relative z-2">
+          <div class="row align-items-center">
+            <div class="col-lg-6">
+              <div class="pe-lg-5">
+                <h1 class="display-2 fw-bold mb-4">Fresh Food, Fast Delivery</h1>
+                <p class="lead mb-5">Experience the taste of freshness with our carefully crafted meals, made from locally sourced ingredients and delivered right to your door.</p>
+                <div class="d-flex flex-column flex-sm-row gap-3">
+                  <a href="menu-fresh-fork.html" class="btn btn-light btn-lg px-5">
+                    <i class="ci-utensils me-2"></i>Order Now
+                  </a>
+                  <a href="#features" class="btn btn-outline-light btn-lg px-5">
+                    <i class="ci-play-circle me-2"></i>Learn More
+                  </a>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="swiper hero-swiper" data-swiper='{
+                "loop": true,
+                "autoplay": {
+                  "delay": 3000,
+                  "disableOnInteraction": false
+                },
+                "pagination": {
+                  "el": ".swiper-pagination",
+                  "clickable": true
+                }
+              }'>
+                <div class="swiper-wrapper">
+                  <div class="swiper-slide">
+                    <div class="ratio ratio-4x3 rounded-3 overflow-hidden">
+                      <img src="assets/img/restaurant/hero-1.jpg" class="swiper-lazy" alt="Fresh Food">
+                    </div>
+                  </div>
+                  <div class="swiper-slide">
+                    <div class="ratio ratio-4x3 rounded-3 overflow-hidden">
+                      <img src="assets/img/restaurant/hero-2.jpg" class="swiper-lazy" alt="Delivery">
+                    </div>
+                  </div>
+                  <div class="swiper-slide">
+                    <div class="ratio ratio-4x3 rounded-3 overflow-hidden">
+                      <img src="assets/img/restaurant/hero-3.jpg" class="swiper-lazy" alt="Chef">
+                    </div>
+                  </div>
+                </div>
+                <div class="swiper-pagination mt-4"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features Section -->
+      <section id="features" class="container py-5 py-lg-7">
+        <div class="text-center mb-5">
+          <h2 class="display-5 fw-bold text-fresh-dark mb-3">Why Choose Fresh Fork?</h2>
+          <p class="lead text-muted">We're committed to providing you with the best dining experience</p>
+        </div>
+        
+        <div class="row g-4">
+          <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body text-center">
+                <div class="bg-fresh-green text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                  <i class="ci-truck fs-4"></i>
+                </div>
+                <h5 class="card-title text-fresh-dark">Fast Delivery</h5>
+                <p class="card-text text-muted">Get your food delivered in 30 minutes or less, guaranteed hot and fresh.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body text-center">
+                <div class="bg-fresh-green text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                  <i class="ci-leaf fs-4"></i>
+                </div>
+                <h5 class="card-title text-fresh-dark">Fresh Ingredients</h5>
+                <p class="card-text text-muted">We use only the freshest, locally sourced ingredients in every dish.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body text-center">
+                <div class="bg-fresh-green text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                  <i class="ci-chef fs-4"></i>
+                </div>
+                <h5 class="card-title text-fresh-dark">Expert Chefs</h5>
+                <p class="card-text text-muted">Our talented chefs craft each meal with passion and precision.</p>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-3 col-sm-6">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body text-center">
+                <div class="bg-fresh-green text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                  <i class="ci-recycle fs-4"></i>
+                </div>
+                <h5 class="card-title text-fresh-dark">Sustainable</h5>
+                <p class="card-text text-muted">Eco-friendly packaging and sustainable practices in everything we do.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Popular Items Gallery -->
+      <section class="bg-light py-5 py-lg-7">
+        <div class="container">
+          <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-fresh-dark mb-3">Popular Dishes</h2>
+            <p class="lead text-muted">Discover our customer favorites</p>
+          </div>
+          
+          <div class="row align-items-start">
+            <!-- Main Featured Item -->
+            <div class="col-lg-7 mb-4 mb-lg-0">
+              <div class="sticky-lg-top" style="margin-top: 20px;">
+                <div class="swiper featured-dish-swiper" data-swiper='{
+                  "loop": true,
+                  "autoplay": {
+                    "delay": 4000,
+                    "disableOnInteraction": false
+                  },
+                  "pagination": {
+                    "el": ".swiper-pagination",
+                    "clickable": true
+                  }
+                }'>
+                  <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                      <div class="ratio ratio-16x9 rounded-3 overflow-hidden">
+                        <img src="assets/img/restaurant/salmon-bowl.jpg" class="swiper-lazy" alt="Salmon Bowl">
+                        <div class="position-absolute bottom-0 start-0 end-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
+                          <h3 class="text-white fw-bold mb-1">Premium Salmon Bowl</h3>
+                          <p class="text-white/90 mb-2">Fresh Atlantic salmon with quinoa and vegetables</p>
+                          <div class="d-flex align-items-center justify-content-between">
+                            <span class="h4 text-white fw-bold mb-0">$18.99</span>
+                            <button class="btn btn-fresh btn-sm" onclick="addToCart('salmon-bowl')">
+                              <i class="ci-shopping-cart me-1"></i>Add to Cart
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="swiper-slide">
+                      <div class="ratio ratio-16x9 rounded-3 overflow-hidden">
+                        <img src="assets/img/restaurant/chicken-sandwich.jpg" class="swiper-lazy" alt="Chicken Sandwich">
+                        <div class="position-absolute bottom-0 start-0 end-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
+                          <h3 class="text-white fw-bold mb-1">Grilled Chicken Sandwich</h3>
+                          <p class="text-white/90 mb-2">Tender grilled chicken with avocado and special sauce</p>
+                          <div class="d-flex align-items-center justify-content-between">
+                            <span class="h4 text-white fw-bold mb-0">$14.99</span>
+                            <button class="btn btn-fresh btn-sm" onclick="addToCart('chicken-sandwich')">
+                              <i class="ci-shopping-cart me-1"></i>Add to Cart
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="swiper-pagination mt-3"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Side Items Grid -->
+            <div class="col-lg-5">
+              <div class="d-flex flex-column gap-4">
+                <!-- Item 1 -->
+                <div class="card border-0 shadow-sm">
+                  <div class="row g-0">
+                    <div class="col-4">
+                      <div class="ratio ratio-1x1">
+                        <img src="assets/img/restaurant/garden-salad.jpg" class="img-fluid rounded-start" alt="Garden Salad">
+                      </div>
+                    </div>
+                    <div class="col-8">
+                      <div class="card-body h-100">
+                        <span class="badge bg-fresh-green mb-2">Popular</span>
+                        <h5 class="card-title text-fresh-dark">Fresh Garden Salad</h5>
+                        <p class="card-text text-muted small">Mixed greens with signature dressing</p>
+                        <div class="d-flex align-items-center justify-content-between mt-auto">
+                          <span class="h5 fresh-green mb-0">$12.99</span>
+                          <button class="btn btn-fresh btn-sm" onclick="addToCart('garden-salad')">
+                            <i class="ci-shopping-cart me-1"></i>Add
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="card border-0 shadow-sm">
+                  <div class="row g-0">
+                    <div class="col-4">
+                      <div class="ratio ratio-1x1">
+                        <img src="assets/img/restaurant/veggie-stir-fry.jpg" class="img-fluid rounded-start" alt="Veggie Stir-Fry">
+                      </div>
+                    </div>
+                    <div class="col-8">
+                      <div class="card-body h-100">
+                        <h5 class="card-title text-fresh-dark">Vegetable Stir-Fry</h5>
+                        <p class="card-text text-muted small">Crisp vegetables with ginger-soy sauce</p>
+                        <div class="d-flex align-items-center justify-content-between mt-auto">
+                          <span class="h5 fresh-green mb-0">$13.99</span>
+                          <button class="btn btn-fresh btn-sm" onclick="addToCart('veggie-stir-fry')">
+                            <i class="ci-shopping-cart me-1"></i>Add
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Item 3 -->
+                <div class="card border-0 shadow-sm">
+                  <div class="row g-0">
+                    <div class="col-4">
+                      <div class="ratio ratio-1x1">
+                        <img src="assets/img/restaurant/chocolate-cake.jpg" class="img-fluid rounded-start" alt="Chocolate Cake">
+                      </div>
+                    </div>
+                    <div class="col-8">
+                      <div class="card-body h-100">
+                        <span class="badge bg-fresh-green mb-2">Bestseller</span>
+                        <h5 class="card-title text-fresh-dark">Chocolate Cake</h5>
+                        <p class="card-text text-muted small">Rich chocolate with vanilla frosting</p>
+                        <div class="d-flex align-items-center justify-content-between mt-auto">
+                          <span class="h5 fresh-green mb-0">$8.99</span>
+                          <button class="btn btn-fresh btn-sm" onclick="addToCart('chocolate-cake')">
+                            <i class="ci-shopping-cart me-1"></i>Add
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- How It Works -->
+      <section class="container py-5 py-lg-7">
+        <div class="text-center mb-5">
+          <h2 class="display-5 fw-bold text-fresh-dark mb-3">How It Works</h2>
+          <p class="lead text-muted">Ordering your favorite meals has never been easier</p>
+        </div>
+        
+        <div class="row g-4">
+          <div class="col-md-4">
+            <div class="text-center">
+              <div class="bg-fresh-green text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                <span class="fs-3 fw-bold">1</span>
+              </div>
+              <h5 class="mb-3 text-fresh-dark">Browse Menu</h5>
+              <p class="text-muted">Explore our diverse menu with categories from appetizers to desserts.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="text-center">
+              <div class="bg-fresh-green text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                <span class="fs-3 fw-bold">2</span>
+              </div>
+              <h5 class="mb-3 text-fresh-dark">Place Order</h5>
+              <p class="text-muted">Add items to your cart and securely checkout in just a few clicks.</p>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="text-center">
+              <div class="bg-fresh-green text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                <span class="fs-3 fw-bold">3</span>
+              </div>
+              <h5 class="mb-3 text-fresh-dark">Track & Enjoy</h5>
+              <p class="text-muted">Track your order in real-time and enjoy your fresh meal when it arrives.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Testimonials -->
+      <section class="bg-light py-5 py-lg-7">
+        <div class="container">
+          <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-fresh-dark mb-3">Customer Reviews</h2>
+            <p class="lead text-muted">What our customers are saying</p>
+          </div>
+          
+          <div class="swiper testimonial-swiper" data-swiper='{
+            "loop": true,
+            "autoplay": {
+              "delay": 5000,
+              "disableOnInteraction": false
+            },
+            "pagination": {
+              "el": ".swiper-pagination",
+              "clickable": true
+            },
+            "breakpoints": {
+              "768": {
+                "slidesPerView": 2
+              },
+              "992": {
+                "slidesPerView": 3
+              }
+            }
+          }'>
+            <div class="swiper-wrapper">
+              <div class="swiper-slide">
+                <div class="card border-0 shadow-sm h-100">
+                  <div class="card-body">
+                    <div class="d-flex mb-3">
+                      <div class="text-warning">
+                        <i class="ci-star-fill"></i>
+                        <i class="ci-star-fill"></i>
+                        <i class="ci-star-fill"></i>
+                        <i class="ci-star-fill"></i>
+                        <i class="ci-star-fill"></i>
+                      </div>
+                    </div>
+                    <blockquote class="blockquote mb-3">
+                      "Best food delivery service in town! Always fresh and on time. The salmon bowl is my favorite!"
+                    </blockquote>
+                    <footer class="blockquote-footer">
+                      <div class="d-flex align-items-center">
+                        <img src="assets/img/team/01.jpg" class="rounded-circle me-2" width="40" alt="Customer">
+                        <div>
+                          <div class="fw-semibold">Sarah Johnson</div>
+                          <div class="text-muted small">Regular Customer</div>
+                        </div>
+                      </div>
+                    </footer>
+                  </div>
+                </div>
+              </div>
+              <div class="swiper-slide">
+                <div class="card border-0 shadow-sm h-100">
+                  <div class="card-body">
+                    <div class="d-flex mb-3">
+                      <div class="text-warning">
+                        <i class="ci-star-fill"></i>
+                        <i class="ci-star-fill"></i>
+                        <i class="ci-star-fill"></i>
+                        <i class="ci-star-fill"></i>
+                        <i class="ci-star-fill"></i>
+                      </div>
+                    </div>
+                    <blockquote class="blockquote mb-3">
+                      "The real-time order tracking is amazing! I love knowing exactly when my food will arrive."
+                    </blockquote>
+                    <footer class="blockquote-footer">
+                      <div class="d-flex align-items-center">
+                        <img src="assets/img/team/02.jpg" class="rounded-circle me-2" width="40" alt="Customer">
+                        <div>
+                          <div class="fw-semibold">Mike Chen</div>
+                          <div class="text-muted small">Tech Professional</div>
+                        </div>
+                      </div>
+                    </footer>
+                  </div>
+                </div>
+              </div>
+              <div class="swiper-slide">
+                <div class="card border-0 shadow-sm h-100">
+                  <div class="card-body">
+                    <div class="d-flex mb-3">
+                      <div class="text-warning">
+                        <i class="ci-star-fill"></i>
+                        <i class="ci-star-fill"></i>
+                        <i class="ci-star-fill"></i>
+                        <i class="ci-star-fill"></i>
+                        <i class="ci-star-fill"></i>
+                      </div>
+                    </div>
+                    <blockquote class="blockquote mb-3">
+                      "Love the sustainable packaging and the focus on local ingredients. Tastes great and feels good!"
+                    </blockquote>
+                    <footer class="blockquote-footer">
+                      <div class="d-flex align-items-center">
+                        <img src="assets/img/team/03.jpg" class="rounded-circle me-2" width="40" alt="Customer">
+                        <div>
+                          <div class="fw-semibold">Emma Wilson</div>
+                          <div class="text-muted small">Environmental Advocate</div>
+                        </div>
+                      </div>
+                    </footer>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="swiper-pagination mt-4"></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-fresh-dark text-white py-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4 mb-4 mb-lg-0">
+            <div class="d-flex align-items-center mb-3">
+              <span class="fs-2 me-2">🍴</span>
+              <h3 class="h4 mb-0">Fresh Fork</h3>
+            </div>
+            <p class="text-light">Serving fresh, delicious meals made with love and the finest ingredients since 2024.</p>
+            <div class="d-flex gap-3">
+              <a href="#" class="text-light text-decoration-none"><i class="ci-facebook"></i></a>
+              <a href="#" class="text-light text-decoration-none"><i class="ci-instagram"></i></a>
+              <a href="#" class="text-light text-decoration-none"><i class="ci-twitter"></i></a>
+            </div>
+          </div>
+          
+          <div class="col-lg-2 col-md-6 mb-4 mb-md-0">
+            <h5 class="h6 mb-3">Quick Links</h5>
+            <ul class="list-unstyled">
+              <li class="mb-2"><a href="menu-fresh-fork.html" class="text-light text-decoration-none">Menu</a></li>
+              <li class="mb-2"><a href="about-fresh-fork.html" class="text-light text-decoration-none">About Us</a></li>
+              <li class="mb-2"><a href="contact-fresh-fork.html" class="text-light text-decoration-none">Contact</a></li>
+              <li class="mb-2"><a href="track-order-fresh-fork.html" class="text-light text-decoration-none">Track Order</a></li>
+            </ul>
+          </div>
+          
+          <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+            <h5 class="h6 mb-3">Support</h5>
+            <ul class="list-unstyled">
+              <li class="mb-2"><a href="#" class="text-light text-decoration-none">Help Center</a></li>
+              <li class="mb-2"><a href="#" class="text-light text-decoration-none">Privacy Policy</a></li>
+              <li class="mb-2"><a href="#" class="text-light text-decoration-none">Terms of Service</a></li>
+              <li class="mb-2"><a href="#" class="text-light text-decoration-none">FAQ</a></li>
+            </ul>
+          </div>
+          
+          <div class="col-lg-3">
+            <h5 class="h6 mb-3">Contact Info</h5>
+            <ul class="list-unstyled text-light">
+              <li class="mb-2"><i class="ci-location me-2"></i>123 Food Street, Culinary City</li>
+              <li class="mb-2"><i class="ci-phone me-2"></i>(555) 123-4567</li>
+              <li class="mb-2"><i class="ci-mail me-2"></i>info@freshfork.com</li>
+              <li class="mb-2"><i class="ci-clock me-2"></i>Mon-Sun: 11am-10pm</li>
+            </ul>
+          </div>
+        </div>
+        
+        <hr class="border-secondary my-4">
+        
+        <div class="text-center">
+          <p class="mb-0">&copy; 2024 Fresh Fork. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Vendor Scripts -->
+    <script src="assets/vendor/jarallax/dist/jarallax.min.js"></script>
+    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
+    <script src="assets/vendor/simplebar/dist/simplebar.min.js"></script>
+    <script src="assets/vendor/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script src="assets/vendor/glightbox/dist/js/glightbox.min.js"></script>
+
+    <!-- Main Theme Script -->
+    <script src="assets/js/theme.min.js"></script>
+    
+    <!-- Fresh Fork Custom Scripts -->
+    <script>
+      // Add to cart function
+      function addToCart(itemId) {
+        console.log('Added to cart:', itemId);
+        alert(`Item added to cart! 🎉`);
+        // Here you would implement actual cart logic
+      }
+    </script>
+  </body>
+</html>

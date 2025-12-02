@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light" data-pwa="true">
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, viewport-fit=cover">
+
+    <!-- SEO Meta Tags -->
+    <title>Fresh Fork | Restaurant Menu</title>
+    <meta name="description" content="Browse our complete menu of fresh, delicious dishes made with locally sourced ingredients">
+    <meta name="keywords" content="restaurant menu, food ordering, fresh food, dishes, meals">
+    <meta name="author" content="Fresh Fork Team">
+
+    <!-- Webmanifest + Favicon / App icons -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="assets/app-icons/icon-32x32.png" sizes="32x32">
+    <link rel="apple-touch-icon" href="assets/app-icons/icon-180x180.png">
+
+    <!-- Theme switcher (color modes) -->
+    <script src="assets/js/theme-switcher.js"></script>
+
+    <!-- Preloaded local web font (Inter) -->
+    <link rel="preload" href="assets/fonts/inter-variable-latin.woff2" as="font" type="font/woff2" crossorigin>
+
+    <!-- Font icons -->
+    <link rel="preload" href="assets/icons/cartzilla-icons.woff2" as="font" type="font/woff2" crossorigin>
+    <link rel="stylesheet" href="assets/icons/cartzilla-icons.min.css">
+
+    <!-- Vendor styles -->
+    <link rel="stylesheet" href="assets/vendor/simplebar/dist/simplebar.min.css">
+    <link rel="stylesheet" href="assets/vendor/choices.js/public/assets/styles/choices.min.css">
+    <link rel="stylesheet" href="assets/vendor/nouislider/dist/nouislider.min.css">
+
+    <!-- Bootstrap + Theme styles -->
+    <link rel="preload" href="assets/css/theme.min.css" as="style">
+    <link rel="preload" href="assets/css/theme.rtl.min.css" as="style">
+    <link rel="stylesheet" href="assets/css/theme.min.css" id="theme-styles">
+    
+    <!-- Custom Fresh Fork styles -->
+    <style>
+      :root {
+        --fresh-green: #10b981;
+        --fresh-dark: #064e3b;
+        --fresh-light: #d1fae5;
+      }
+      
+      .fresh-green {
+        color: var(--fresh-green) !important;
+      }
+      
+      .bg-fresh-green {
+        background-color: var(--fresh-green) !important;
+      }
+      
+      .bg-fresh-dark {
+        background-color: var(--fresh-dark) !important;
+      }
+      
+      .btn-fresh {
+        background-color: var(--fresh-green);
+        border-color: var(--fresh-green);
+        color: white;
+      }
+      
+      .btn-fresh:hover {
+        background-color: #059669;
+        border-color: #059669;
+        color: white;
+      }
+      
+      .category-btn {
+        border: 2px solid var(--fresh-green);
+        color: var(--fresh-green);
+        background: white;
+      }
+      
+      .category-btn:hover,
+      .category-btn.active {
+        background-color: var(--fresh-green);
+        color: white;
+      }
+    </style>
+  </head>
+
+  <!-- Body -->
+  <body>
+
+    <!-- Shopping cart offcanvas -->
+    <div class="offcanvas offcanvas-end pb-sm-2 px-sm-2" id="shoppingCart" tabindex="-1" aria-labelledby="shoppingCartLabel" style="width: 500px">
+
+      <!-- Header -->
+      <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="shoppingCartLabel">Your Order</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+
+      <!-- Body -->
+      <div class="offcanvas-body py-3">
+        <div class="py-4 text-center">
+          <i class="ci-utensils fs-1 text-muted mb-3"></i>
+          <h6 class="mb-2">Your cart is empty</h6>
+          <p class="text-muted fs-sm">Add some delicious items to get started!</p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="offcanvas-footer border-top d-none">
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <span class="fw-semibold">Total:</span>
+          <span class="h3 mb-0 fw-bold">$0.00</span>
+        </div>
+        <button type="button" class="btn btn-fresh btn-lg w-100">
+          <i class="ci-lock me-2"></i>Checkout
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu sidebar (offcanvas) -->
+    <nav class="offcanvas offcanvas-start" id="navbarNav" tabindex="-1" aria-labelledby="navbarNavLabel">
+      <div class="offcanvas-header border-bottom">
+        <h5 class="offcanvas-title" id="navbarNavLabel">Browse Fresh Fork</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+      </div>
+
+      <!-- Navbar nav -->
+      <div class="offcanvas-body">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link" href="home-fresh-fork.html">
+              <i class="ci-home me-2"></i>Home
+            </a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="menu-fresh-fork.html">
+              <i class="ci-restaurant me-2"></i>Menu
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="about-fresh-fork.html">
+              <i class="ci-info-circle me-2"></i>About
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="contact-fresh-fork.html">
+              <i class="ci-phone me-2"></i>Contact
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="track-order-fresh-fork.html">
+              <i class="ci-package me-2"></i>Track Order
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+
+    <!-- Main header: Desktop -->
+    <header class="navbar navbar-expand navbar-sticky sticky-top d-block bg-body z-fixed py-1 py-lg-0 py-xl-1 px-0" data-sticky-element>
+      <div class="container py-lg-2">
+        <div class="d-flex align-items-center">
+          <!-- Mobile menu toggle (hamburger) -->
+          <button type="button" class="navbar-toggler d-block flex-shrink-0 me-3 me-sm-4" data-bs-toggle="offcanvas" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <!-- Navbar brand (Logo) -->
+          <a class="navbar-brand fs-2 p-0 pe-lg-2 pe-xxl-0 me-0 me-sm-3 me-md-4 me-xxl-5" href="home-fresh-fork.html">
+            <span class="fresh-green">🍴 Fresh Fork</span>
+          </a>
+
+          <!-- Desktop main menu -->
+          <ul class="navbar-nav d-none d-lg-flex me-auto order-lg-2">
+            <li class="nav-item">
+              <a class="nav-link" href="home-fresh-fork.html">Home</a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="menu-fresh-fork.html">Menu</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="about-fresh-fork.html">About</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="contact-fresh-fork.html">Contact</a>
+            </li>
+          </ul>
+
+          <!-- Header toolbar -->
+          <div class="d-flex align-items-center ms-auto">
+            <!-- Search toggle -->
+            <button type="button" class="btn btn-link btn-icon p-2 me-1 me-sm-3" data-bs-toggle="collapse" data-bs-target="#searchBox" aria-expanded="false" aria-controls="searchBox">
+              <i class="ci-search"></i>
+            </button>
+
+            <!-- Shopping cart toggle -->
+            <button type="button" class="btn btn-link btn-icon p-2 me-1 me-sm-3" data-bs-toggle="offcanvas" data-bs-target="#shoppingCart" aria-controls="shoppingCart">
+              <i class="ci-shopping-cart"></i>
+            </button>
+
+            <!-- User account -->
+            <div class="dropdown d-none d-sm-block">
+              <button type="button" class="btn btn-link btn-icon p-2" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="ci-user"></i>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end">
+                <li><a class="dropdown-item" href="login-fresh-fork.html"><i class="ci-user me-2"></i>Sign In</a></li>
+                <li><a class="dropdown-item" href="register-fresh-fork.html"><i class="ci-user-plus me-2"></i>Sign Up</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item" href="profile-fresh-fork.html"><i class="ci-settings me-2"></i>Profile Settings</a></li>
+                <li><a class="dropdown-item" href="orders-fresh-fork.html"><i class="ci-package me-2"></i>Order History</a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Search box (collapsible) -->
+        <div class="collapse" id="searchBox">
+          <div class="container py-2">
+            <div class="position-relative">
+              <input type="search" class="form-control pe-5" placeholder="Search menu items...">
+              <button type="button" class="btn btn-link btn-icon position-absolute top-50 end-0 translate-middle-y pe-3" data-bs-toggle="collapse" data-bs-target="#searchBox" aria-expanded="false" aria-controls="searchBox">
+                <i class="ci-close"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Page content -->
+    <main class="page-wrapper">
+
+      <!-- Page title -->
+      <div class="container py-4 py-lg-5 my-4">
+        <div class="row">
+          <div class="col-lg-8">
+            <h1 class="display-4 fw-bold mb-3">Our Menu</h1>
+            <p class="lead text-muted">Explore our carefully crafted dishes made with the freshest ingredients</p>
+          </div>
+          <div class="col-lg-4 text-lg-end">
+            <div class="d-flex align-items-center justify-content-lg-end gap-3">
+              <span class="text-muted">Sort by:</span>
+              <select class="form-select" style="width: auto;">
+                <option value="popular">Most Popular</option>
+                <option value="price-low">Price: Low to High</option>
+                <option value="price-high">Price: High to Low</option>
+                <option value="name">Name: A-Z</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category filters -->
+      <div class="container mb-4">
+        <div class="d-flex flex-wrap gap-2" id="categoryFilters">
+          <button class="btn category-btn active" data-category="all">All Items</button>
+          <button class="btn category-btn" data-category="appetizers">🥗 Appetizers</button>
+          <button class="btn category-btn" data-category="salads">🥬 Salads</button>
+          <button class="btn category-btn" data-category="sandwiches">🍔 Sandwiches</button>
+          <button class="btn category-btn" data-category="bowls">🍣 Bowls</button>
+          <button class="btn category-btn" data-category="mains">🍽️ Main Courses</button>
+          <button class="btn category-btn" data-category="desserts">🍰 Desserts</button>
+          <button class="btn category-btn" data-category="beverages">🥤 Beverages</button>
+        </div>
+      </div>
+
+      <!-- Menu items grid -->
+      <div class="container pb-5 mb-2 mb-sm-4 mb-sm-5">
+        <div class="row g-4" id="menuItems">
+          <!-- Items will be dynamically loaded here -->
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-fresh-dark text-white py-5">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-4 mb-4 mb-lg-0">
+            <div class="d-flex align-items-center mb-3">
+              <span class="fs-2 me-2">🍴</span>
+              <h3 class="h4 mb-0">Fresh Fork</h3>
+            </div>
+            <p class="text-light">Serving fresh, delicious meals made with love and the finest ingredients since 2024.</p>
+            <div class="d-flex gap-3">
+              <a href="#" class="text-light text-decoration-none"><i class="ci-facebook"></i></a>
+              <a href="#" class="text-light text-decoration-none"><i class="ci-instagram"></i></a>
+              <a href="#" class="text-light text-decoration-none"><i class="ci-twitter"></i></a>
+            </div>
+          </div>
+          
+          <div class="col-lg-2 col-md-6 mb-4 mb-md-0">
+            <h5 class="h6 mb-3">Quick Links</h5>
+            <ul class="list-unstyled">
+              <li class="mb-2"><a href="menu-fresh-fork.html" class="text-light text-decoration-none">Menu</a></li>
+              <li class="mb-2"><a href="about-fresh-fork.html" class="text-light text-decoration-none">About Us</a></li>
+              <li class="mb-2"><a href="contact-fresh-fork.html" class="text-light text-decoration-none">Contact</a></li>
+              <li class="mb-2"><a href="track-order-fresh-fork.html" class="text-light text-decoration-none">Track Order</a></li>
+            </ul>
+          </div>
+          
+          <div class="col-lg-3 col-md-6 mb-4 mb-md-0">
+            <h5 class="h6 mb-3">Support</h5>
+            <ul class="list-unstyled">
+              <li class="mb-2"><a href="#" class="text-light text-decoration-none">Help Center</a></li>
+              <li class="mb-2"><a href="#" class="text-light text-decoration-none">Privacy Policy</a></li>
+              <li class="mb-2"><a href="#" class="text-light text-decoration-none">Terms of Service</a></li>
+              <li class="mb-2"><a href="#" class="text-light text-decoration-none">FAQ</a></li>
+            </ul>
+          </div>
+          
+          <div class="col-lg-3">
+            <h5 class="h6 mb-3">Contact Info</h5>
+            <ul class="list-unstyled text-light">
+              <li class="mb-2"><i class="ci-location me-2"></i>123 Food Street, Culinary City</li>
+              <li class="mb-2"><i class="ci-phone me-2"></i>(555) 123-4567</li>
+              <li class="mb-2"><i class="ci-mail me-2"></i>info@freshfork.com</li>
+              <li class="mb-2"><i class="ci-clock me-2"></i>Mon-Sun: 11am-10pm</li>
+            </ul>
+          </div>
+        </div>
+        
+        <hr class="border-secondary my-4">
+        
+        <div class="text-center">
+          <p class="mb-0">&copy; 2024 Fresh Fork. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Vendor Scripts -->
+    <script src="assets/vendor/simplebar/dist/simplebar.min.js"></script>
+    <script src="assets/vendor/choices.js/public/assets/scripts/choices.min.js"></script>
+    <script src="assets/vendor/nouislider/dist/nouislider.min.js"></script>
+
+    <!-- Main Theme Script -->
+    <script src="assets/js/theme.min.js"></script>
+    
+    <!-- Fresh Fork Menu Scripts -->
+    <script>
+      // Menu items data
+      const menuItems = [
+        // Appetizers
+        { id: 1, name: 'Spring Rolls', description: 'Crispy vegetable spring rolls with sweet chili sauce', price: 8.99, category: 'appetizers', emoji: '🥟', popular: true },
+        { id: 2, name: 'Bruschetta', description: 'Toasted bread with tomatoes, basil, and garlic', price: 7.99, category: 'appetizers', emoji: '🍞', popular: false },
+        { id: 3, name: 'Soup of the Day', description: 'Fresh homemade soup with seasonal ingredients', price: 6.99, category: 'appetizers', emoji: '🍲', popular: true },
+        
+        // Salads
+        { id: 4, name: 'Fresh Garden Salad', description: 'Mixed greens with cherry tomatoes, cucumber, and signature dressing', price: 12.99, category: 'salads', emoji: '🥗', popular: true },
+        { id: 5, name: 'Caesar Salad', description: 'Romaine lettuce, parmesan, croutons, and Caesar dressing', price: 11.99, category: 'salads', emoji: '🥬', popular: true },
+        { id: 6, name: 'Greek Salad', description: 'Feta cheese, olives, tomatoes, and cucumber with Greek dressing', price: 13.99, category: 'salads', emoji: '🫒', popular: false },
+        
+        // Sandwiches
+        { id: 7, name: 'Grilled Chicken Sandwich', description: 'Tender grilled chicken with avocado, lettuce, and house-made aioli', price: 14.99, category: 'sandwiches', emoji: '🍔', popular: true },
+        { id: 8, name: 'Veggie Burger', description: 'Plant-based patty with lettuce, tomato, and special sauce', price: 13.99, category: 'sandwiches', emoji: '🍔', popular: false },
+        { id: 9, name: 'Club Sandwich', description: 'Triple-layered sandwich with turkey, bacon, and vegetables', price: 15.99, category: 'sandwiches', emoji: '🥪', popular: true },
+        
+        // Bowls
+        { id: 10, name: 'Salmon Bowl', description: 'Fresh Atlantic salmon with quinoa, roasted vegetables, and lemon butter', price: 18.99, category: 'bowls', emoji: '🍣', popular: true },
+        { id: 11, name: 'Buddha Bowl', description: 'Quinoa, chickpeas, avocado, and roasted vegetables', price: 16.99, category: 'bowls', emoji: '🍛', popular: false },
+        { id: 12, name: 'Poke Bowl', description: 'Fresh tuna, rice, vegetables, and spicy mayo', price: 19.99, category: 'bowls', emoji: '🐟', popular: true },
+        
+        // Main Courses
+        { id: 13, name: 'Grilled Salmon', description: 'Atlantic salmon with herbs, lemon, and seasonal vegetables', price: 24.99, category: 'mains', emoji: '🐟', popular: true },
+        { id: 14, name: 'Steak Frites', description: 'Grilled ribeye steak with french fries and garlic butter', price: 28.99, category: 'mains', emoji: '🥩', popular: true },
+        { id: 15, name: 'Vegetable Stir-Fry', description: 'Crisp vegetables in savory ginger-soy sauce with brown rice', price: 13.99, category: 'mains', emoji: '🥘', popular: false },
+        { id: 16, name: 'Pasta Primavera', description: 'Fresh pasta with seasonal vegetables and parmesan', price: 16.99, category: 'mains', emoji: '🍝', popular: false },
+        
+        // Desserts
+        { id: 17, name: 'Chocolate Cake', description: 'Rich chocolate cake with vanilla frosting', price: 8.99, category: 'desserts', emoji: '🍰', popular: true },
+        { id: 18, name: 'Fruit Tart', description: 'Fresh seasonal fruits on pastry cream', price: 7.99, category: 'desserts', emoji: '🥧', popular: false },
+        { id: 19, name: 'Ice Cream', description: 'Artisanal ice cream with seasonal flavors', price: 5.99, category: 'desserts', emoji: '🍦', popular: true },
+        
+        // Beverages
+        { id: 20, name: 'Fresh Juice', description: 'Freshly squeezed orange, apple, or carrot juice', price: 4.99, category: 'beverages', emoji: '🥤', popular: false },
+        { id: 21, name: 'Smoothie', description: 'Blended fruit smoothie with yogurt and honey', price: 6.99, category: 'beverages', emoji: '🥤', popular: true },
+        { id: 22, name: 'Craft Soda', description: 'Artisanal soda with natural flavors', price: 3.99, category: 'beverages', emoji: '🥤', popular: false }
+      ];
+
+      let currentCategory = 'all';
+      let currentSort = 'popular';
+
+      // Initialize menu
+      document.addEventListener('DOMContentLoaded', function() {
+        renderMenuItems();
+        setupCategoryFilters();
+        setupSorting();
+      });
+
+      // Render menu items
+      function renderMenuItems() {
+        const container = document.getElementById('menuItems');
+        container.innerHTML = '';
+        
+        let filteredItems = filterItems(menuItems, currentCategory);
+        filteredItems = sortItems(filteredItems, currentSort);
+        
+        filteredItems.forEach(item => {
+          const itemHtml = `
+            <div class="col-md-6 col-lg-4">
+              <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-3">
+                    <div class="fs-2">${item.emoji}</div>
+                    ${item.popular ? '<span class="badge bg-fresh-green">Popular</span>' : ''}
+                  </div>
+                  <h5 class="card-title">${item.name}</h5>
+                  <p class="card-text text-muted small">${item.description}</p>
+                  <div class="d-flex align-items-center justify-content-between">
+                    <span class="h5 mb-0 fresh-green">$${item.price}</span>
+                    <button class="btn btn-fresh btn-sm" onclick="addToCart(${item.id})">
+                      <i class="ci-shopping-cart me-1"></i>Add to Cart
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+          container.innerHTML += itemHtml;
+        });
+      }
+
+      // Filter items by category
+      function filterItems(items, category) {
+        if (category === 'all') return items;
+        return items.filter(item => item.category === category);
+      }
+
+      // Sort items
+      function sortItems(items, sortType) {
+        const sorted = [...items];
+        switch (sortType) {
+          case 'popular':
+            return sorted.sort((a, b) => (b.popular ? 1 : 0) - (a.popular ? 1 : 0));
+          case 'price-low':
+            return sorted.sort((a, b) => a.price - b.price);
+          case 'price-high':
+            return sorted.sort((a, b) => b.price - a.price);
+          case 'name':
+            return sorted.sort((a, b) => a.name.localeCompare(b.name));
+          default:
+            return sorted;
+        }
+      }
+
+      // Setup category filters
+      function setupCategoryFilters() {
+        const filterButtons = document.querySelectorAll('.category-btn');
+        filterButtons.forEach(button => {
+          button.addEventListener('click', function() {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            currentCategory = this.dataset.category;
+            renderMenuItems();
+          });
+        });
+      }
+
+      // Setup sorting
+      function setupSorting() {
+        const sortSelect = document.querySelector('select');
+        sortSelect.addEventListener('change', function() {
+          currentSort = this.value;
+          renderMenuItems();
+        });
+      }
+
+      // Add to cart function
+      function addToCart(itemId) {
+        const item = menuItems.find(i => i.id === itemId);
+        if (item) {
+          console.log('Added to cart:', item);
+          alert(`${item.name} added to cart!`);
+          // Here you would implement actual cart logic
+        }
+      }
+    </script>
+  </body>
+</html>
