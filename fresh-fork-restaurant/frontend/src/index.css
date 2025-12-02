@@ -1,0 +1,383 @@
+/* Custom styles for Fresh Fork - Modern Orange Theme */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Fresh Orange Theme - Warm and Appetizing */
+.fresh-orange {
+  color: #FF6B35 !important;
+}
+
+.fresh-green {
+  color: #FF6B35 !important;
+}
+
+.bg-fresh-orange {
+  background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%) !important;
+}
+
+.bg-fresh-green {
+  background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%) !important;
+}
+
+.btn-fresh {
+  background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+  color: white;
+  border: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-fresh:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 107, 53, 0.4);
+  color: white;
+}
+
+.btn-outline-fresh {
+  background: white;
+  color: #FF6B35;
+  border: 2px solid #FFE5D9;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.btn-outline-fresh:hover {
+  background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+  color: white;
+  border-color: #FF6B35;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+/* Override Bootstrap primary with orange theme */
+.btn-primary {
+  background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%) !important;
+  border: none !important;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 107, 53, 0.4) !important;
+}
+
+/* Fix for hero slider positioning */
+.position-relative {
+  position: relative !important;
+}
+
+.position-absolute {
+  position: absolute !important;
+}
+
+.z-2 {
+  z-index: 2 !important;
+}
+
+.z-3 {
+  z-index: 3 !important;
+}
+
+.w-100 {
+  width: 100% !important;
+}
+
+.h-100 {
+  height: 100% !important;
+}
+
+.object-fit-cover {
+  object-fit: cover !important;
+}
+
+/* Category Navigation Bar Styles */
+.category-nav {
+  scrollbar-width: thin;
+  scrollbar-color: #FFE5D9 #FFF5F0;
+}
+
+.category-nav::-webkit-scrollbar {
+  height: 6px;
+}
+
+.category-nav::-webkit-scrollbar-track {
+  background: #FFF5F0;
+}
+
+.category-nav::-webkit-scrollbar-thumb {
+  background: #FFE5D9;
+  border-radius: 3px;
+}
+
+.category-nav::-webkit-scrollbar-thumb:hover {
+  background: #FFD4C4;
+}
+
+.category-nav .badge {
+  font-size: 0.75rem;
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.category-nav a:hover .badge {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+}
+
+.category-nav a:hover span.fw-medium {
+  color: #FF6B35 !important;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+}
+
+/* Pink badge color */
+.bg-pink {
+  background-color: #ec4899 !important;
+}
+
+/* Gradient badge for Specials */
+.bg-gradient {
+  background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%) !important;
+}
+
+/* Category bar mobile responsiveness */
+@media (max-width: 768px) {
+  .category-nav .d-flex {
+    gap: 1rem;
+  }
+
+  .category-nav .me-4 {
+    margin-right: 0 !important;
+  }
+}
+
+/* Category Sidebar Styles */
+.category-sidebar a {
+  transition: all 0.2s ease;
+}
+
+.category-sidebar a:hover {
+  background-color: #FFF5F0 !important;
+  transform: translateX(4px);
+}
+
+.category-sidebar a:hover span.fw-medium {
+  color: #FF6B35 !important;
+}
+
+.category-sidebar a:hover .badge {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(255, 107, 53, 0.2);
+}
+
+/* Modern Category Links */
+.category-link {
+  text-decoration: none;
+  display: block;
+}
+
+.category-link.active>div {
+  background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%) !important;
+  color: white !important;
+}
+
+.category-link.active>div span {
+  color: white !important;
+}
+
+.category-link:hover>div {
+  background-color: #FFF5F0;
+}
+
+/* Modern Card Styles */
+.shadow-sm {
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075) !important;
+}
+
+/* Enhanced transitions */
+.transition-all {
+  transition: all 0.2s ease !important;
+}
+
+/* Modern badge animations */
+.badge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.hover-effect-underline {
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.hover-effect-underline:hover {
+  color: #FF6B35 !important;
+  text-decoration: underline;
+}
+
+/* Product Cards Styling */
+.product-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 16px !important;
+  overflow: hidden;
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.product-card .card-img-top {
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+.product-card .badge {
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.5rem 1rem;
+}
+
+/* Fixed Sidebar Styling */
+.sidebar-fixed {
+  position: fixed;
+  top: 100px;
+  left: auto;
+  width: 100%;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  z-index: 1000;
+  border-radius: 1rem !important;
+}
+
+/* Category Dropdown Styling */
+.category-dropdown .category-link {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.category-dropdown .category-link:hover {
+  background-color: #FFF5F0;
+  border-radius: 0.5rem;
+}
+
+.category-dropdown .category-link.active {
+  background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+  color: white;
+  border-radius: 0.5rem;
+}
+
+.category-dropdown .category-link.active .text-dark {
+  color: white !important;
+}
+
+.category-dropdown .collapse {
+  border-left: 2px solid #FFE5D9;
+  margin-left: 1rem;
+}
+
+.category-dropdown .collapse a {
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.category-dropdown .collapse a:hover {
+  color: #FF6B35;
+}
+
+/* Menu Items Styling */
+.menu-item-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 16px !important;
+  overflow: hidden;
+}
+
+.menu-item-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15) !important;
+}
+
+.menu-item-card .card-img-top {
+  transition: transform 0.3s ease;
+}
+
+.menu-item-card:hover .card-img-top {
+  transform: scale(1.05);
+}
+
+.menu-item-card .badge {
+  font-weight: 600;
+  font-size: 0.75rem;
+  padding: 0.5rem 1rem;
+}
+
+/* Filter Sidebar Styling */
+.sticky-top {
+  position: sticky;
+  top: 120px;
+  z-index: 10;
+}
+
+.form-check-input:checked {
+  background-color: #FF6B35;
+  border-color: #FF6B35;
+}
+
+.form-range::-webkit-slider-thumb {
+  background: #FF6B35;
+}
+
+.form-range::-moz-range-thumb {
+  background: #FF6B35;
+}
+
+/* Sidebar responsive adjustments */
+@media (max-width: 992px) {
+  .sticky-top[style*="top: 120px"] {
+    top: 140px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .sticky-top[style*="top: 120px"] {
+    top: 160px !important;
+  }
+}
+
+/* Smooth animations */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
