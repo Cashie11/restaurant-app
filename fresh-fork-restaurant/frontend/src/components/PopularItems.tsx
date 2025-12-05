@@ -103,13 +103,13 @@ const PopularItems: React.FC = () => {
       style={{
         background: 'linear-gradient(to bottom, #FFFFFF 0%, #FFF5F0 100%)',
         borderRadius: '24px',
-        padding: '2rem',
+        padding: '1.5rem',
         border: '1px solid #FFE5D9'
       }}
     >
 
-      {/* Product Cards Grid */}
-      <div className="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-3 row-cols-xl-4 g-4">
+      {/* Product Cards Grid - Optimized for Mobile */}
+      <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-3 row-cols-xl-4 g-3 g-sm-4">
         {popularItems.map((item) => (
           <div key={item.id} className="col">
             <div
@@ -131,7 +131,7 @@ const PopularItems: React.FC = () => {
               }}
             >
               {/* Image Section */}
-              <div className="position-relative" style={{ backgroundColor: '#FFF5F0', padding: '1.5rem' }}>
+              <div className="position-relative" style={{ backgroundColor: '#FFF5F0', padding: '1rem' }}>
                 {/* Wishlist Button */}
                 <button
                   type="button"
