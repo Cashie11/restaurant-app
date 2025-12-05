@@ -1,68 +1,18 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { authService } from '../services/authService';
+import { Link } from 'react-router-dom';
 
 const Signup: React.FC = () => {
-    const [formData, setFormData] = useState({
-        first_name: '',
-        last_name: '',
-        email: '',
-        phone: '',
-        password: '',
-        confirmPassword: ''
-    });
     const [showPassword, setShowPassword] = useState(false);
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
-
-    const navigate = useNavigate();
-
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
-
-        if (formData.password !== formData.confirmPassword) {
-            setError('Passwords do not match');
-            return;
-        }
-
-        setLoading(true);
-
-        try {
-            await authService.signup({
-                email: formData.email,
-                password: formData.password,
-                first_name: formData.first_name,
-                last_name: formData.last_name,
-                phone: formData.phone
-            });
-            // Redirect to signin page on success
-            navigate('/signin', { state: { message: 'Account created successfully! Please sign in.' } });
-        } catch (err: any) {
-            console.error('Signup error:', err);
-            setError(err.response?.data?.detail || 'Failed to create account. Please try again.');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     return (
         <main className="content-wrapper w-100 px-3 ps-lg-5 pe-lg-4 mx-auto" style={{
             maxWidth: '1920px',
-            background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             minHeight: '100vh'
         }}>
             <div className="d-lg-flex">
-                {/* Signup form + Footer */}
+                {/* Login form + Footer */}
                 <div className="d-flex flex-column min-vh-100 w-100 py-4 mx-auto me-lg-5" style={{ maxWidth: '416px' }}>
 
                     {/* Navigation Bar */}
@@ -139,16 +89,16 @@ const Signup: React.FC = () => {
                             <nav>
                                 <ul className="navbar-nav gap-2">
                                     <li className="nav-item">
-                                        <Link className="nav-link fw-medium" to="/" onClick={() => setIsMenuOpen(false)} style={{ color: '#FF6B35' }}>Home</Link>
+                                        <Link className="nav-link fw-medium" to="/" onClick={() => setIsMenuOpen(false)} style={{ color: '#667eea' }}>Home</Link>
                                     </li>
                                     <li className="nav-item">
-                                        <Link className="nav-link fw-medium" to="/menu" onClick={() => setIsMenuOpen(false)} style={{ color: '#FF6B35' }}>Menu</Link>
+                                        <Link className="nav-link fw-medium" to="/menu" onClick={() => setIsMenuOpen(false)} style={{ color: '#667eea' }}>Menu</Link>
                                     </li>
                                     <li className="nav-item">
-                                        <Link className="nav-link fw-medium" to="/about" onClick={() => setIsMenuOpen(false)} style={{ color: '#FF6B35' }}>About</Link>
+                                        <Link className="nav-link fw-medium" to="/about" onClick={() => setIsMenuOpen(false)} style={{ color: '#667eea' }}>About</Link>
                                     </li>
                                     <li className="nav-item">
-                                        <Link className="nav-link fw-medium" to="/contact" onClick={() => setIsMenuOpen(false)} style={{ color: '#FF6B35' }}>Contact</Link>
+                                        <Link className="nav-link fw-medium" to="/contact" onClick={() => setIsMenuOpen(false)} style={{ color: '#667eea' }}>Contact</Link>
                                     </li>
                                 </ul>
                             </nav>
@@ -160,78 +110,22 @@ const Signup: React.FC = () => {
                         backdropFilter: 'blur(10px)',
                         boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
                     }}>
-                        <h1 className="h2 mb-2" style={{ color: '#2d3436' }}>Create Account</h1>
+                        <h1 className="h2 mb-2" style={{ color: '#2d3436' }}>Create an account</h1>
                         <div className="mb-4" style={{ color: '#636e72' }}>
-                            Already have an account?
-                            <Link className="text-decoration-none ms-2 fw-semibold" to="/signin" style={{ color: '#FF6B35' }}>Sign in</Link>
+                            I already have an account
+                            <Link className="text-decoration-none ms-2 fw-semibold" to="/signin" style={{ color: '#667eea' }}>Sign in</Link>
                         </div>
 
-                        {error && (
-                            <div className="alert alert-danger border-0 rounded-3 mb-4" role="alert">
-                                <i className="ci-close-circle me-2"></i>{error}
-                            </div>
-                        )}
-
                         {/* Form */}
-                        <form className="needs-validation" onSubmit={handleSubmit} noValidate>
-                            <div className="row">
-                                <div className="col-sm-6 mb-4">
-                                    <input
-                                        type="text"
-                                        name="first_name"
-                                        className="form-control form-control-lg border-0 shadow-sm"
-                                        placeholder="First Name"
-                                        required
-                                        value={formData.first_name}
-                                        onChange={handleChange}
-                                        style={{
-                                            backgroundColor: '#f8f9fa',
-                                            borderRadius: '12px',
-                                            padding: '14px 18px'
-                                        }}
-                                    />
-                                </div>
-                                <div className="col-sm-6 mb-4">
-                                    <input
-                                        type="text"
-                                        name="last_name"
-                                        className="form-control form-control-lg border-0 shadow-sm"
-                                        placeholder="Last Name"
-                                        required
-                                        value={formData.last_name}
-                                        onChange={handleChange}
-                                        style={{
-                                            backgroundColor: '#f8f9fa',
-                                            borderRadius: '12px',
-                                            padding: '14px 18px'
-                                        }}
-                                    />
-                                </div>
-                            </div>
+                        <form className="needs-validation" noValidate>
                             <div className="position-relative mb-4">
+                                <label htmlFor="register-email" className="form-label fw-semibold" style={{ color: '#2d3436' }}>Email</label>
                                 <input
                                     type="email"
-                                    name="email"
                                     className="form-control form-control-lg border-0 shadow-sm"
-                                    placeholder="Email"
+                                    id="register-email"
+                                    placeholder="your@email.com"
                                     required
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                    style={{
-                                        backgroundColor: '#f8f9fa',
-                                        borderRadius: '12px',
-                                        padding: '14px 18px'
-                                    }}
-                                />
-                            </div>
-                            <div className="position-relative mb-4">
-                                <input
-                                    type="tel"
-                                    name="phone"
-                                    className="form-control form-control-lg border-0 shadow-sm"
-                                    placeholder="Phone Number"
-                                    value={formData.phone}
-                                    onChange={handleChange}
                                     style={{
                                         backgroundColor: '#f8f9fa',
                                         borderRadius: '12px',
@@ -240,16 +134,16 @@ const Signup: React.FC = () => {
                                 />
                             </div>
                             <div className="mb-4">
+                                <label htmlFor="register-password" className="form-label fw-semibold" style={{ color: '#2d3436' }}>Password</label>
                                 <div className="password-toggle">
                                     <div className="input-group">
                                         <input
                                             type={showPassword ? "text" : "password"}
-                                            name="password"
                                             className="form-control form-control-lg border-0 shadow-sm"
-                                            placeholder="Password"
+                                            id="register-password"
+                                            minLength={8}
+                                            placeholder="Minimum 8 characters"
                                             required
-                                            value={formData.password}
-                                            onChange={handleChange}
                                             style={{
                                                 backgroundColor: '#f8f9fa',
                                                 borderRadius: '12px 0 0 12px',
@@ -263,7 +157,7 @@ const Signup: React.FC = () => {
                                             style={{
                                                 backgroundColor: '#f8f9fa',
                                                 borderRadius: '0 12px 12px 0',
-                                                color: '#FF6B35'
+                                                color: '#667eea'
                                             }}
                                         >
                                             <i className={`ci-${showPassword ? 'eye' : 'eye-off'}`}></i>
@@ -271,70 +165,39 @@ const Signup: React.FC = () => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="mb-4">
-                                <div className="password-toggle">
-                                    <div className="input-group">
-                                        <input
-                                            type={showConfirmPassword ? "text" : "password"}
-                                            name="confirmPassword"
-                                            className="form-control form-control-lg border-0 shadow-sm"
-                                            placeholder="Confirm Password"
-                                            required
-                                            value={formData.confirmPassword}
-                                            onChange={handleChange}
-                                            style={{
-                                                backgroundColor: '#f8f9fa',
-                                                borderRadius: '12px 0 0 12px',
-                                                padding: '14px 18px'
-                                            }}
-                                        />
-                                        <button
-                                            className="btn border-0 shadow-sm"
-                                            type="button"
-                                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                            style={{
-                                                backgroundColor: '#f8f9fa',
-                                                borderRadius: '0 12px 12px 0',
-                                                color: '#FF6B35'
-                                            }}
-                                        >
-                                            <i className={`ci-${showConfirmPassword ? 'eye' : 'eye-off'}`}></i>
-                                        </button>
-                                    </div>
+                            <div className="d-flex flex-column gap-3 mb-4">
+                                <div className="form-check">
+                                    <input type="checkbox" className="form-check-input" id="save-pass" style={{ borderColor: '#dfe6e9' }} />
+                                    <label htmlFor="save-pass" className="form-check-label" style={{ color: '#636e72' }}>Save the password</label>
+                                </div>
+                                <div className="form-check">
+                                    <input type="checkbox" className="form-check-input" id="privacy" required style={{ borderColor: '#dfe6e9' }} />
+                                    <label htmlFor="privacy" className="form-check-label" style={{ color: '#636e72' }}>
+                                        I have read and accept the <a href="#!" style={{ color: '#667eea', textDecoration: 'none' }}>Privacy Policy</a>
+                                    </label>
                                 </div>
                             </div>
-
                             <button
                                 type="submit"
-                                disabled={loading}
                                 className="btn btn-lg w-100 text-white fw-semibold shadow-lg"
                                 style={{
-                                    background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
+                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                     border: 'none',
                                     borderRadius: '12px',
                                     padding: '14px',
-                                    transition: 'transform 0.2s, box-shadow 0.2s',
-                                    opacity: loading ? 0.7 : 1
+                                    transition: 'transform 0.2s, box-shadow 0.2s'
                                 }}
                                 onMouseEnter={(e) => {
-                                    if (!loading) {
-                                        e.currentTarget.style.transform = 'translateY(-2px)';
-                                        e.currentTarget.style.boxShadow = '0 10px 30px rgba(102, 126, 234, 0.4)';
-                                    }
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                    e.currentTarget.style.boxShadow = '0 10px 30px rgba(102, 126, 234, 0.4)';
                                 }}
                                 onMouseLeave={(e) => {
-                                    if (!loading) {
-                                        e.currentTarget.style.transform = 'translateY(0)';
-                                        e.currentTarget.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
-                                    }
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
                                 }}
                             >
-                                {loading ? (
-                                    <span>
-                                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                        Creating Account...
-                                    </span>
-                                ) : 'Create Account'}
+                                Create an account
+                                <i className="ci-chevron-right fs-lg ms-1 me-n1"></i>
                             </button>
                         </form>
                     </div>
@@ -354,16 +217,35 @@ const Signup: React.FC = () => {
                 <div className="d-none d-lg-block w-100 py-4 ms-auto" style={{ maxWidth: '1034px' }}>
                     <div className="d-flex flex-column justify-content-center align-items-center h-100 rounded-5 overflow-hidden position-relative" style={{ minHeight: '600px' }}>
                         <img
-                            src="/assets/img/home/grocery/hero-slider/02.jpg"
+                            src="/assets/img/home/grocery/hero-slider/01.jpg"
                             alt="Fresh Food"
                             className="position-absolute top-0 start-0 w-100 h-100 object-fit-cover"
                             style={{ objectPosition: 'center' }}
                         />
                         <div className="position-absolute top-0 start-0 w-100 h-100" style={{ backgroundColor: 'rgba(109, 175, 202, 0.85)' }}></div>
                         <div className="position-relative z-2 text-center text-white p-5">
-                            <h2 className="display-5 fw-bold mb-4">🥗 Join Fresh Fork!</h2>
-                            <p className="fs-4 mb-3">Create an account to start ordering</p>
-                            <p className="fs-5 opacity-75">Exclusive offers and fast delivery await</p>
+                            <h2 className="display-5 fw-bold mb-4">🍴 Fresh Fork</h2>
+                            <p className="fs-4 mb-4">Join us for the freshest ingredients delivered to your table</p>
+                            <div className="d-flex flex-column gap-3 mt-5">
+                                <div className="d-flex align-items-center justify-content-center gap-3">
+                                    <div className="bg-white bg-opacity-25 rounded-circle p-3">
+                                        <i className="ci-mail fs-3"></i>
+                                    </div>
+                                    <span className="fs-5">Subscribe to favorites</span>
+                                </div>
+                                <div className="d-flex align-items-center justify-content-center gap-3">
+                                    <div className="bg-white bg-opacity-25 rounded-circle p-3">
+                                        <i className="ci-gift fs-3"></i>
+                                    </div>
+                                    <span className="fs-5">Earn rewards</span>
+                                </div>
+                                <div className="d-flex align-items-center justify-content-center gap-3">
+                                    <div className="bg-white bg-opacity-25 rounded-circle p-3">
+                                        <i className="ci-percent fs-3"></i>
+                                    </div>
+                                    <span className="fs-5">Exclusive offers</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -1,40 +1,14 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import { authService } from '../services/authService';
+import { Link } from 'react-router-dom';
 
 const Signin: React.FC = () => {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
-
-    const { login } = useAuth();
-    const navigate = useNavigate();
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
-        setLoading(true);
-
-        try {
-            const response = await authService.signin({ email, password });
-            await login(response.access_token, response.refresh_token);
-            navigate('/');
-        } catch (err: any) {
-            console.error('Login error:', err);
-            setError(err.response?.data?.detail || 'Failed to sign in. Please check your credentials.');
-        } finally {
-            setLoading(false);
-        }
-    };
 
     return (
         <main className="content-wrapper w-100 px-3 ps-lg-5 pe-lg-4 mx-auto" style={{
             maxWidth: '1920px',
-            background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
+            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             minHeight: '100vh'
         }}>
             <div className="d-lg-flex">
@@ -115,16 +89,16 @@ const Signin: React.FC = () => {
                             <nav>
                                 <ul className="navbar-nav gap-2">
                                     <li className="nav-item">
-                                        <Link className="nav-link fw-medium" to="/" onClick={() => setIsMenuOpen(false)} style={{ color: '#FF6B35' }}>Home</Link>
+                                        <Link className="nav-link fw-medium" to="/" onClick={() => setIsMenuOpen(false)} style={{ color: '#667eea' }}>Home</Link>
                                     </li>
                                     <li className="nav-item">
-                                        <Link className="nav-link fw-medium" to="/menu" onClick={() => setIsMenuOpen(false)} style={{ color: '#FF6B35' }}>Menu</Link>
+                                        <Link className="nav-link fw-medium" to="/menu" onClick={() => setIsMenuOpen(false)} style={{ color: '#667eea' }}>Menu</Link>
                                     </li>
                                     <li className="nav-item">
-                                        <Link className="nav-link fw-medium" to="/about" onClick={() => setIsMenuOpen(false)} style={{ color: '#FF6B35' }}>About</Link>
+                                        <Link className="nav-link fw-medium" to="/about" onClick={() => setIsMenuOpen(false)} style={{ color: '#667eea' }}>About</Link>
                                     </li>
                                     <li className="nav-item">
-                                        <Link className="nav-link fw-medium" to="/contact" onClick={() => setIsMenuOpen(false)} style={{ color: '#FF6B35' }}>Contact</Link>
+                                        <Link className="nav-link fw-medium" to="/contact" onClick={() => setIsMenuOpen(false)} style={{ color: '#667eea' }}>Contact</Link>
                                     </li>
                                 </ul>
                             </nav>
@@ -139,25 +113,17 @@ const Signin: React.FC = () => {
                         <h1 className="h2 mb-2" style={{ color: '#2d3436' }}>Welcome back</h1>
                         <div className="mb-4" style={{ color: '#636e72' }}>
                             Don't have an account?
-                            <Link className="text-decoration-none ms-2 fw-semibold" to="/signup" style={{ color: '#FF6B35' }}>Create an account</Link>
+                            <Link className="text-decoration-none ms-2 fw-semibold" to="/signup" style={{ color: '#667eea' }}>Create an account</Link>
                         </div>
 
-                        {error && (
-                            <div className="alert alert-danger border-0 rounded-3 mb-4" role="alert">
-                                <i className="ci-close-circle me-2"></i>{error}
-                            </div>
-                        )}
-
                         {/* Form */}
-                        <form className="needs-validation" onSubmit={handleSubmit} noValidate>
+                        <form className="needs-validation" noValidate>
                             <div className="position-relative mb-4">
                                 <input
                                     type="email"
                                     className="form-control form-control-lg border-0 shadow-sm"
                                     placeholder="Email"
                                     required
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
                                     style={{
                                         backgroundColor: '#f8f9fa',
                                         borderRadius: '12px',
@@ -173,8 +139,6 @@ const Signin: React.FC = () => {
                                             className="form-control form-control-lg border-0 shadow-sm"
                                             placeholder="Password"
                                             required
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
                                             style={{
                                                 backgroundColor: '#f8f9fa',
                                                 borderRadius: '12px 0 0 12px',
@@ -188,7 +152,7 @@ const Signin: React.FC = () => {
                                             style={{
                                                 backgroundColor: '#f8f9fa',
                                                 borderRadius: '0 12px 12px 0',
-                                                color: '#FF6B35'
+                                                color: '#667eea'
                                             }}
                                         >
                                             <i className={`ci-${showPassword ? 'eye' : 'eye-off'}`}></i>
@@ -202,42 +166,31 @@ const Signin: React.FC = () => {
                                     <label htmlFor="remember-30" className="form-check-label" style={{ color: '#636e72', fontSize: '0.9rem' }}>Remember me</label>
                                 </div>
                                 <div className="nav">
-                                    <a className="nav-link p-0" href="/forgot-password" style={{ color: '#FF6B35', textDecoration: 'none', fontSize: '0.9rem' }}>
+                                    <a className="nav-link p-0" href="/forgot-password" style={{ color: '#667eea', textDecoration: 'none', fontSize: '0.9rem' }}>
                                         Forgot password?
                                     </a>
                                 </div>
                             </div>
                             <button
                                 type="submit"
-                                disabled={loading}
                                 className="btn btn-lg w-100 text-white fw-semibold shadow-lg"
                                 style={{
-                                    background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)',
+                                    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                                     border: 'none',
                                     borderRadius: '12px',
                                     padding: '14px',
-                                    transition: 'transform 0.2s, box-shadow 0.2s',
-                                    opacity: loading ? 0.7 : 1
+                                    transition: 'transform 0.2s, box-shadow 0.2s'
                                 }}
                                 onMouseEnter={(e) => {
-                                    if (!loading) {
-                                        e.currentTarget.style.transform = 'translateY(-2px)';
-                                        e.currentTarget.style.boxShadow = '0 10px 30px rgba(102, 126, 234, 0.4)';
-                                    }
+                                    e.currentTarget.style.transform = 'translateY(-2px)';
+                                    e.currentTarget.style.boxShadow = '0 10px 30px rgba(102, 126, 234, 0.4)';
                                 }}
                                 onMouseLeave={(e) => {
-                                    if (!loading) {
-                                        e.currentTarget.style.transform = 'translateY(0)';
-                                        e.currentTarget.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
-                                    }
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.boxShadow = '0 4px 15px rgba(102, 126, 234, 0.3)';
                                 }}
                             >
-                                {loading ? (
-                                    <span>
-                                        <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                                        Signing in...
-                                    </span>
-                                ) : 'Sign In'}
+                                Sign In
                             </button>
                         </form>
                     </div>

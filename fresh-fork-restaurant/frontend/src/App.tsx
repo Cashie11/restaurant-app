@@ -1,7 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { AuthProvider, useAuth } from './context/AuthContext';
 import Hero from './components/Hero';
 import Features from './components/Features';
 import PopularItems from './components/PopularItems';
@@ -10,7 +9,6 @@ import SpecialOffers from './components/SpecialOffers';
 import Menu from './components/Menu';
 import Signup from './components/Signup';
 import Signin from './components/Signin';
-import UserDashboard from './components/UserDashboard';
 import Footer from './components/Footer';
 import './App.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -21,7 +19,6 @@ const AppHeader: React.FC = () => {
   const [showCategoryBar, setShowCategoryBar] = React.useState(true);
   const [lastScrollY, setLastScrollY] = React.useState(0);
   const scrollTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
-  const { isAuthenticated, user, logout } = useAuth();
 
   React.useEffect(() => {
     const handleScroll = () => {
@@ -150,19 +147,7 @@ const AppHeader: React.FC = () => {
                 🛒 <span className="badge bg-primary ms-1">0</span>
               </button>
 
-              {isAuthenticated ? (
-                <Link
-                  to="/dashboard"
-                  className="btn btn-fresh d-none d-md-flex align-items-center gap-2 text-decoration-none"
-                >
-                  <div className="bg-white text-primary rounded-circle d-flex align-items-center justify-content-center" style={{ width: '28px', height: '28px', fontSize: '0.9rem', fontWeight: 'bold' }}>
-                    {user?.first_name?.charAt(0) || 'U'}
-                  </div>
-                  <span>{user?.first_name}</span>
-                </Link>
-              ) : (
-                <Link className="btn btn-fresh d-none d-md-block" to="/signup">Sign Up</Link>
-              )}
+              <Link className="btn btn-fresh d-none d-md-block" to="/signup">Sign Up</Link>
             </div>
           </div>
         </div>
@@ -254,39 +239,19 @@ const AppHeader: React.FC = () => {
                 <button className="btn btn-primary d-flex align-items-center justify-content-center py-3">
                   🛒 Cart <span className="badge bg-light text-primary ms-2">0</span>
                 </button>
-                {isAuthenticated ? (
-                  <>
-                    <div className="bg-light rounded-3 p-3 mb-2">
-                      <div className="d-flex align-items-center mb-3">
-                        <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-3" style={{ width: '50px', height: '50px', fontSize: '1.2rem', fontWeight: 'bold' }}>
-                          {user?.first_name?.charAt(0) || 'U'}
-                        </div>
-                        <div>
-                          <div className="fw-bold">{user?.first_name} {user?.last_name}</div>
-                          <small className="text-muted">{user?.email}</small>
-                        </div>
-                      </div>
-                      <div className="d-grid gap-2">
-                        <Link className="btn btn-outline-primary btn-sm" to="/dashboard" onClick={toggleMenu}>
-                          <i className="ci-user me-2"></i>Dashboard
-                        </Link>
-                        {user?.role === 'admin' && (
-                          <Link className="btn btn-outline-primary btn-sm" to="/admin" onClick={toggleMenu}>
-                            <i className="ci-settings me-2"></i>Admin Panel
-                          </Link>
-                        )}
-                        <button className="btn btn-outline-danger btn-sm" onClick={() => { logout(); toggleMenu(); }}>
-                          <i className="ci-sign-out me-2"></i>Sign Out
-                        </button>
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <Link className="btn btn-outline-primary py-3" to="/signin" onClick={toggleMenu}>Sign In</Link>
-                    <Link className="btn btn-fresh py-3" to="/signup" onClick={toggleMenu}>Sign Up</Link>
-                  </>
-                )}
+                <Link className="btn btn-fresh py-3" to="/signup" onClick={toggleMenu}>Sign Up</Link>
+              </div>
+
+              {/* Mobile Contact Info */}
+              <div className="mt-4 pt-4 border-top">
+                <div className="text-center">
+                  <p className="mb-2 text-muted">
+                    <span className="me-2">📞</span> (555) 123-4567
+                  </p>
+                  <p className="mb-0 text-muted">
+                    <span className="me-2">🕐</span> Mon-Sun: 11am-10pm
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -877,7 +842,7 @@ function HomePage() {
 
 function App() {
   return (
-    <AuthProvider>
+    <>
       <Helmet>
         <link rel="stylesheet" href="/assets/css/theme.min.css" />
       </Helmet>
@@ -885,13 +850,6 @@ function App() {
         <Routes>
           <Route path="/signup" element={<Signup />} />
           <Route path="/signin" element={<Signin />} />
-          <Route path="/dashboard/*" element={
-            <div>
-              <AppHeader />
-              <UserDashboard />
-              <Footer />
-            </div>
-          } />
           <Route path="*" element={
             <div>
               <AppHeader />
@@ -904,7 +862,7 @@ function App() {
           } />
         </Routes>
       </Router>
-    </AuthProvider>
+    </>
   );
 }
 
