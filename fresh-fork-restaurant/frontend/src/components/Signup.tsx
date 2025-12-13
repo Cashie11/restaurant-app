@@ -38,19 +38,32 @@ const Signup: React.FC = () => {
         setLoading(true);
 
         try {
-            await authService.signup({
+            const result = await authService.signup({
                 email: formData.email,
                 password: formData.password,
                 first_name: formData.first_name,
                 last_name: formData.last_name,
                 phone: formData.phone
             });
-            // Redirect to signin page on success
-            navigate('/signin', { state: { message: 'Account created successfully! Please sign in.' } });
+            if (result.id) {
+                // Success - redirect to verification
+                navigate('/verify-email', {
+                    state: {
+                        email: formData.email,
+                        message: 'Account created! Please check your email for the verification code.'
+                    }
+                });
+            } else {
+                setError('Failed to create account');
+            }
         } catch (err: any) {
             console.error('Signup error:', err);
-            setError(err.response?.data?.detail || 'Failed to create account. Please try again.');
-        } finally {
+            // Extract specific error message from backend
+            const errorMessage = err.response?.data?.detail || 'An unexpected error occurred';
+            setError(errorMessage);
+        }
+
+        finally {
             setLoading(false);
         }
     };

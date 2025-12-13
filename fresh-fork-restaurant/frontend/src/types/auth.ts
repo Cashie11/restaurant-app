@@ -22,7 +22,7 @@ export interface User {
     email: string;
     first_name: string;
     last_name: string;
-    role: 'user' | 'admin';
+    role: 'user' | 'admin' | 'super_admin';
     avatar?: string;
     is_active: boolean;
     is_email_verified: boolean;

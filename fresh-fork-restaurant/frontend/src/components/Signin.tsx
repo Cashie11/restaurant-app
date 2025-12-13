@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { authService } from '../services/authService';
 
@@ -10,9 +10,20 @@ const Signin: React.FC = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
 
     const { login } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        const state = (location.state || {}) as { message?: string };
+        if (state.message) {
+            setSuccessMessage(state.message);
+            // Clear the message from history state so it doesn't persist on refresh
+            window.history.replaceState({}, document.title);
+        }
+    }, [location.state]);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -141,6 +152,12 @@ const Signin: React.FC = () => {
                             Don't have an account?
                             <Link className="text-decoration-none ms-2 fw-semibold" to="/signup" style={{ color: '#FF6B35' }}>Create an account</Link>
                         </div>
+
+                        {successMessage && (
+                            <div className="alert alert-success border-0 rounded-3 mb-4" role="alert">
+                                <i className="ci-check-circle me-2"></i>{successMessage}
+                            </div>
+                        )}
 
                         {error && (
                             <div className="alert alert-danger border-0 rounded-3 mb-4" role="alert">
