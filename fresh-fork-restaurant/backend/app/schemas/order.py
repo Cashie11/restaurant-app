@@ -39,9 +39,19 @@ class OrderCreate(BaseModel):
     notes: Optional[str] = None
 
 
+class OrderCreateFromCart(BaseModel):
+    payment_method: PaymentMethod
+    delivery_address: DeliveryAddress
+    notes: Optional[str] = None
+
+
 class OrderUpdate(BaseModel):
     status: Optional[OrderStatus] = None
     payment_status: Optional[PaymentStatus] = None
+
+
+class OrderStatusUpdate(BaseModel):
+    status: OrderStatus
 
 
 class OrderResponse(BaseModel):

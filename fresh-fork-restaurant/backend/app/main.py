@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.core.database import Base, engine
-from app.api.endpoints import auth, users
+from app.api.endpoints import auth, users, admin, products, cart, checkout
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
@@ -28,6 +28,10 @@ app.add_middleware(
 # Include routers
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(users.router, prefix="/api/user", tags=["Users"])
+app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
+app.include_router(products.router, prefix="/api/products", tags=["Products"])
+app.include_router(cart.router, prefix="/api/cart", tags=["Cart"])
+app.include_router(checkout.router, prefix="/api/checkout", tags=["Checkout"])
 
 
 @app.get("/")

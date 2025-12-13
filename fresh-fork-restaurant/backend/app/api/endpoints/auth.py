@@ -1,44 +1,137 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, BackgroundTasks
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
-from datetime import timedelta
+from datetime import timedelta, datetime
+import random
+import string
 from app.core.database import get_db
 from app.core.security import create_access_token, create_refresh_token, decode_token
 from app.core.config import settings
-from app.schemas.auth import UserSignup, Token, PasswordChange, ForgotPassword
+from app.schemas.auth import UserSignup, Token, PasswordChange, ForgotPassword, OTPVerify
 from app.schemas.user import UserResponse
 from app.crud import user as crud_user
 from app.api.deps import get_current_active_user
 from app.models.user import User
+from app.utils.email import email_service
 
 router = APIRouter()
 
+def generate_otp(length=6):
+    return ''.join(random.choices(string.digits, k=length))
 
 @router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
 async def signup(
     user_data: UserSignup,
+    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
 ):
     """
-    Register a new user
-    
-    - **email**: Valid email address
-    - **password**: Minimum 8 characters, must contain uppercase and digit
-    - **first_name**: User's first name
-    - **last_name**: User's last name
-    - **phone**: Optional phone number
+    Register a new user and send verification OTP
     """
     # Check if user already exists
     existing_user = crud_user.get_user_by_email(db, email=user_data.email)
     if existing_user:
+        if existing_user.is_email_verified:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email already registered"
+            )
+        else:
+            # If the user exists but is not verified, delete the old record so they can retry
+            db.delete(existing_user)
+            db.commit()
+    
+    # Create new user (inactive until verified)
+    user = crud_user.create_user(db, user_data)
+    
+    # Generate and save OTP
+    otp_code = generate_otp()
+    user.otp_code = otp_code
+    user.otp_expires_at = datetime.utcnow() + timedelta(minutes=5)
+    db.commit()
+    
+    # Send OTP email in background
+    background_tasks.add_task(email_service.send_otp_email, user.email, otp_code)
+    
+    return user
+
+
+@router.post("/verify-otp", status_code=status.HTTP_200_OK)
+async def verify_otp(
+    otp_data: OTPVerify,
+    db: Session = Depends(get_db)
+):
+    """
+    Verify user account with OTP
+    """
+    user = crud_user.get_user_by_email(db, email=otp_data.email)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+        
+    if user.is_email_verified:
+        return {"message": "Email already verified"}
+        
+    if not user.otp_code or not user.otp_expires_at:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Email already registered"
+            detail="No OTP verification pending"
         )
+        
+    if user.otp_code != otp_data.otp_code:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid OTP code"
+        )
+        
+    if datetime.utcnow() > user.otp_expires_at:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="OTP code expired"
+        )
+        
+    # Verify user
+    user.is_email_verified = True
+    user.otp_code = None
+    user.otp_expires_at = None
+    db.commit()
     
-    # Create new user
-    user = crud_user.create_user(db, user_data)
-    return user
+    return {"message": "Email verified successfully"}
+
+
+@router.post("/resend-otp")
+async def resend_otp(
+    email: str,
+    db: Session = Depends(get_db)
+):
+    """
+    Resend verification OTP
+    """
+    user = crud_user.get_user_by_email(db, email=email)
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="User not found"
+        )
+        
+    if user.is_email_verified:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already verified"
+        )
+        
+    # Generate and save new OTP
+    otp_code = generate_otp()
+    user.otp_code = otp_code
+    user.otp_expires_at = datetime.utcnow() + timedelta(minutes=5)
+    db.commit()
+    
+    # Send OTP email
+    email_service.send_otp_email(user.email, otp_code)
+    
+    return {"message": "OTP resent successfully"}
 
 
 @router.post("/signin", response_model=Token)
@@ -48,8 +141,6 @@ async def signin(
 ):
     """
     Login with email and password
-    
-    Returns access token and refresh token
     """
     # Authenticate user
     user = crud_user.authenticate_user(db, email=form_data.username, password=form_data.password)
@@ -64,6 +155,13 @@ async def signin(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Inactive user account"
+        )
+        
+    if not user.is_email_verified and user.role != "admin": # Allow admin skip or conditional
+        # Alternatively, we could auto-send OTP here if they try to login unverified
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Email not verified. Please verify your account."
         )
     
     # Create access token
@@ -132,8 +230,6 @@ async def change_password(
 ):
     """
     Change user password
-    
-    Requires current password for verification
     """
     success = crud_user.change_password(
         db,
@@ -158,10 +254,12 @@ async def forgot_password(
 ):
     """
     Request password reset
-    
-    Sends password reset email (to be implemented)
     """
     user = crud_user.get_user_by_email(db, email=data.email)
+    
+    if user:
+         # In a real app, generate reset token and send email
+         pass
     
     # Always return success to prevent email enumeration
     return {"message": "If the email exists, a password reset link has been sent"}
