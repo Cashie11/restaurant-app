@@ -21,9 +21,11 @@ services:
       - PAYSTACK_SECRET_KEY=${PAYSTACK_SECRET_KEY}
     command: >
       sh -c "alembic upgrade head &&
-             uvicorn app.main:app --host 0.0.0.0 --port 8000"
+             uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload"
     volumes:
+      - ./backend:/app
       - backend-data:/app/data
+      - /app/venv
     networks:
       - urbangrille-network
     healthcheck:
@@ -39,8 +41,14 @@ services:
       dockerfile: Dockerfile
     container_name: urbangrille-frontend
     restart: unless-stopped
+    command: npm start
     ports:
       - "3000:3000"
+    environment:
+      - WATCHPACK_POLLING=true
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
     depends_on:
       backend:
         condition: service_healthy
