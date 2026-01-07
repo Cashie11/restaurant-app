@@ -3,19 +3,23 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
+# 1. Catch the argument from Docker Compose
+ARG REACT_APP_API_URL
+
+# 2. Set it as an environment variable for the build process
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+
 # Copy package files
 COPY package*.json ./
 
 # Install dependencies
 RUN npm install --legacy-peer-deps
-
-# Install ajv for build compatibility
 RUN npm install ajv@^8.12.0 --legacy-peer-deps
 
 # Copy application source
 COPY . .
 
-# Build the application
+# Build the application (Now it can see the variable!)
 RUN npm run build
 
 # Stage 2: Serve with Nginx
