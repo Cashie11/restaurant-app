@@ -6,6 +6,7 @@ import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import { bankService, BankAccount } from '../services/bankService';
 import { nigerianStates } from '../data/nigerianStates';
+import { API_BASE_URL } from '../api/axios';
 
 const Checkout: React.FC = () => {
     const { cart, refreshCart } = useCart();
@@ -101,7 +102,7 @@ const Checkout: React.FC = () => {
                 notes: `Phone: ${formData.phone}. ${formData.notes}` // Appending phone to notes for now as backend might strict
             };
 
-            const response = await axios.post('http://localhost:8000/api/checkout/place-order', orderData, {
+            const response = await axios.post(`${API_BASE_URL}/checkout/place-order`, orderData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
