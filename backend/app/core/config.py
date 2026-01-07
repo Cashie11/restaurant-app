@@ -4,16 +4,16 @@ from typing import Optional
 
 class Settings(BaseSettings):
     # Database
-    DATABASE_URL: str = "postgresql://postgres:password@localhost:5432/urbangrille"
+    DATABASE_URL: str
     
     # Security
-    SECRET_KEY: str = "your-secret-key-change-this-in-production"
+    SECRET_KEY: str
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     
     # CORS
-    FRONTEND_URL: str = "http://localhost:3000"
+    FRONTEND_URL: str
     
     # Email
     SMTP_HOST: Optional[str] = None
@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     SMTP_PASSWORD: Optional[str] = None
 
     # Payments
-    PAYSTACK_SECRET_KEY: str = "sk_test_placeholder"
+    PAYSTACK_SECRET_KEY: Optional[str] = None
     
     class Config:
         env_file = ".env"
