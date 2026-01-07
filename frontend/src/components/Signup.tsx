@@ -57,11 +57,10 @@ const Signup: React.FC = () => {
                 phone: formData.phone
             });
             if (result.id) {
-                // Success - redirect to verification
-                navigate('/verify-email', {
+                // Success - redirect to signin (since auto-verified)
+                navigate('/signin', {
                     state: {
-                        email: formData.email,
-                        message: 'Account created! Please check your email for the verification code.'
+                        message: 'Account created! Please sign in.'
                     }
                 });
             } else {
@@ -316,7 +315,7 @@ const Signup: React.FC = () => {
                         />
                         <div className="position-absolute top-0 start-0 w-100 h-100" style={{ backgroundColor: 'rgba(109, 175, 202, 0.85)' }}></div>
                         <div className="position-relative z-2 text-center text-white p-5">
-                            <h2 className="display-5 fw-bold mb-4">🥗 Join Urban Grille!</h2>
+                            <h2 className="display-5 fw-bold mb-4">Join Urban Grille!</h2>
                             <p className="fs-4 mb-3">Create an account to start ordering</p>
                             <p className="fs-5 opacity-75">Exclusive offers and fast delivery await</p>
                         </div>

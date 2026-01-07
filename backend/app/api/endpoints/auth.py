@@ -41,17 +41,14 @@ async def signup(
             db.delete(existing_user)
             db.commit()
     
-    # Create new user (inactive until verified)
+    # Create new user (auto-verified per requirement)
     user = crud_user.create_user(db, user_data)
-    
-    # Generate and save OTP
-    otp_code = generate_otp()
-    user.otp_code = otp_code
-    user.otp_expires_at = datetime.utcnow() + timedelta(minutes=5)
+    user.is_email_verified = True
+    user.is_active = True
     db.commit()
     
-    # Send OTP email in background
-    background_tasks.add_task(email_service.send_otp_email, user.email, otp_code)
+    # Send Welcome email instead of OTP (optional)
+    # background_tasks.add_task(email_service.send_welcome_email, user.email)
     
     return user
 
@@ -157,12 +154,12 @@ async def signin(
             detail="Inactive user account"
         )
         
-    if not user.is_email_verified and user.role != "admin": # Allow admin skip or conditional
-        # Alternatively, we could auto-send OTP here if they try to login unverified
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Email not verified. Please verify your account."
-        )
+    # Email verification check removed per requirement
+    # if not user.is_email_verified and user.role != "admin": # Allow admin skip or conditional
+    #     raise HTTPException(
+    #         status_code=status.HTTP_403_FORBIDDEN,
+    #         detail="Email not verified. Please verify your account."
+    #     )
     
     # Create access token
     access_token_expires = timedelta(minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES)

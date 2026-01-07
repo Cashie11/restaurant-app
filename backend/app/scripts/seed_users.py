@@ -47,8 +47,8 @@ def seed_users():
         db.commit()
         print("✅ Successfully seeded users!")
         print("Credentials:")
-        print(f"Admin: {settings.SEED_ADMIN_EMAIL} / {settings.SEED_ADMIN_PASSWORD}")
-        print(f"User:  {settings.SEED_USER_EMAIL}  / {settings.SEED_USER_PASSWORD}")
+        print(f"Admin: {settings.SEED_ADMIN_EMAIL} / [HIDDEN] (Check .env)")
+        print(f"User:  {settings.SEED_USER_EMAIL}  / [HIDDEN]")
         
     except Exception as e:
         print(f"❌ Error seeding users: {e}")

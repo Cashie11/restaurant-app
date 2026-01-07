@@ -17,7 +17,7 @@ const Hero: React.FC = () => {
             {/* Content Content - Left Side */}
             <div className="position-relative z-2 ps-4 ps-md-5 py-5" style={{ maxWidth: '600px' }}>
               <div className="d-flex align-items-center mb-3">
-                <span className="fs-5 me-2">🔥</span>
+                <i className="ci-delivery fs-5 me-2 text-white"></i>
                 <span className="text-white fw-medium">Free delivery for orders above ₦50,000</span>
               </div>
 

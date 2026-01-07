@@ -80,13 +80,13 @@ const Menu: React.FC = () => {
     };
 
     const categories = [
-        { id: 'all', name: 'All Items', emoji: '🍽️' },
-        { id: 'appetizers', name: 'Appetizers', emoji: '🥗' },
-        { id: 'main', name: 'Main Courses', emoji: '🍖' },
-        { id: 'pasta', name: 'Pasta & Pizza', emoji: '🍝' },
-        { id: 'seafood', name: 'Seafood', emoji: '🦞' },
-        { id: 'desserts', name: 'Desserts', emoji: '🍰' },
-        { id: 'beverages', name: 'Beverages', emoji: '🥤' }
+        { id: 'all', name: 'All Items' },
+        { id: 'appetizers', name: 'Appetizers' },
+        { id: 'main', name: 'Main Courses' },
+        { id: 'pasta', name: 'Pasta & Pizza' },
+        { id: 'seafood', name: 'Seafood' },
+        { id: 'desserts', name: 'Desserts' },
+        { id: 'beverages', name: 'Beverages' }
     ];
 
     if (loading) {
@@ -190,7 +190,6 @@ const Menu: React.FC = () => {
                                 }}
                                 onClick={() => handleCategoryChange(category.id)}
                             >
-                                <span className="me-2">{category.emoji}</span>
                                 {category.name}
                             </button>
                         ))}
@@ -269,7 +268,9 @@ const Menu: React.FC = () => {
                 {/* Empty State */}
                 {filteredItems.length === 0 && (
                     <div className="text-center py-5">
-                        <div className="mb-4" style={{ fontSize: '4rem' }}>🍽️</div>
+                        <div className="mb-4 text-muted">
+                            <i className="ci-search display-1"></i>
+                        </div>
                         <h3 className="mb-3" style={{ color: '#2d3436' }}>No items found</h3>
                         <p style={{ color: '#636e72' }}>Try selecting a different category</p>
                     </div>
