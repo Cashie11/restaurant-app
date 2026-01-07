@@ -6,6 +6,7 @@ import { adminService } from '../services/adminService';
 import { productService, Product, ProductCreate } from '../services/productService';
 import { bankService, BankAccount, BankAccountCreate } from '../services/bankService';
 import { contactService, ContactMessage } from '../services/contactService';
+import { API_BASE_URL } from '../api/axios';
 
 const AdminDashboard: React.FC = () => {
     const { user, logout } = useAuth();
@@ -141,7 +142,7 @@ const AdminDashboard: React.FC = () => {
             // My upload endpoint implementation didn't strictly require auth, but let's assume valid usercontext.
             // Using fetch for simplicity or I can import axios.
             const token = localStorage.getItem('access_token');
-            const response = await fetch('http://localhost:8000/api/upload/', {
+            const response = await fetch(`${API_BASE_URL}/upload/`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`

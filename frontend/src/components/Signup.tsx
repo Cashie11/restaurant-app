@@ -70,7 +70,19 @@ const Signup: React.FC = () => {
         } catch (err: any) {
             console.error('Signup error:', err);
             // Extract specific error message from backend
-            const errorMessage = err.response?.data?.detail || 'An unexpected error occurred';
+            // Pydantic returns validation errors as an array
+            const detail = err.response?.data?.detail;
+            let errorMessage = 'An unexpected error occurred';
+
+            if (typeof detail === 'string') {
+                errorMessage = detail;
+            } else if (Array.isArray(detail) && detail.length > 0) {
+                // Extract message from Pydantic validation error
+                errorMessage = detail.map(e => e.msg || e.message || JSON.stringify(e)).join(', ');
+            } else if (detail) {
+                errorMessage = JSON.stringify(detail);
+            }
+
             setError(errorMessage);
         }
 
@@ -242,6 +254,9 @@ const Signup: React.FC = () => {
                                         </button>
                                     </div>
                                 </div>
+                            </div>
+                            <div className="small text-muted mt-2" style={{ fontSize: '0.85rem' }}>
+                                Password must be at least 8 characters and contain at least one uppercase letter and one digit.
                             </div>
 
                             <button

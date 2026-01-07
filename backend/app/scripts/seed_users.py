@@ -7,6 +7,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from app.core.database import SessionLocal
 from app.models.user import User, UserRole
 from app.core.security import get_password_hash
+from app.core.config import settings
 
 def seed_users():
     db = SessionLocal()
@@ -21,10 +22,10 @@ def seed_users():
         
         # Create Admin
         admin_user = User(
-            email="admin@urbangrille.com",
+            email=settings.SEED_ADMIN_EMAIL,
             first_name="Admin",
             last_name="User",
-            hashed_password=get_password_hash("UrbanChef!2025Secure"),
+            hashed_password=get_password_hash(settings.SEED_ADMIN_PASSWORD),
             is_active=True,
             role=UserRole.ADMIN,
             is_email_verified=True
@@ -33,10 +34,10 @@ def seed_users():
         
         # Create Regular User
         regular_user = User(
-            email="user@example.com",
+            email=settings.SEED_USER_EMAIL,
             first_name="Test",
             last_name="User",
-            hashed_password=get_password_hash("user123"),
+            hashed_password=get_password_hash(settings.SEED_USER_PASSWORD),
             is_active=True,
             role=UserRole.USER,
             is_email_verified=True
@@ -46,8 +47,8 @@ def seed_users():
         db.commit()
         print("✅ Successfully seeded users!")
         print("Credentials:")
-        print("Admin: admin@urbangrille.com / UrbanChef!2025Secure")
-        print("User:  user@example.com  / user123")
+        print(f"Admin: {settings.SEED_ADMIN_EMAIL} / {settings.SEED_ADMIN_PASSWORD}")
+        print(f"User:  {settings.SEED_USER_EMAIL}  / {settings.SEED_USER_PASSWORD}")
         
     except Exception as e:
         print(f"❌ Error seeding users: {e}")

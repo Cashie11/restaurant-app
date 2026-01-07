@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+// Export baseURL for use in other services
+export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000/api';
+
 const api = axios.create({
-    baseURL: 'http://localhost:8000/api',
+    baseURL: API_BASE_URL,
     headers: {
         'Content-Type': 'application/json',
     },
@@ -37,7 +40,7 @@ api.interceptors.response.use(
 
                 // Call refresh endpoint
                 // Note: We use a new axios instance to avoid interceptors loop
-                const response = await axios.post('http://localhost:8000/api/auth/refresh-token', null, {
+                const response = await axios.post(`${API_BASE_URL}/auth/refresh-token`, null, {
                     params: { refresh_token: refreshToken }
                 });
 

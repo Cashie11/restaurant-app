@@ -133,6 +133,15 @@ docker-compose down -v
 
 # Start fresh
 docker-compose up -d
+
+docker compose exec backend sh -c "
+  python -m app.scripts.add_cancellation_col && \
+  python -m app.scripts.add_delivery_fee && \
+  python -m app.scripts.add_user_deleted_col && \
+  python -m app.scripts.seed_banks && \
+  python -m app.scripts.seed_products && \
+  python -m app.scripts.seed_users
+"
 ```
 
 ## Development Team

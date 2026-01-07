@@ -21,6 +21,12 @@ class Settings(BaseSettings):
     SMTP_USER: Optional[str] = None
     SMTP_PASSWORD: Optional[str] = None
 
+    # Seed Users (for development/testing)
+    SEED_ADMIN_EMAIL: str
+    SEED_ADMIN_PASSWORD: str
+    SEED_USER_EMAIL: str
+    SEED_USER_PASSWORD: str
+
     # Payments
     PAYSTACK_SECRET_KEY: Optional[str] = None
     
