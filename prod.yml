@@ -48,5 +48,4 @@ volumes:
 
 networks:
   web_network:
-    name: web_network
-    driver: bridge
+    external: true
