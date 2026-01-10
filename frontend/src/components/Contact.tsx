@@ -191,9 +191,9 @@ const Contact: React.FC = () => {
                 {/* Contact Info */}
                 <div className="contact-info">
                     <h2 className="h4 mb-3">Get in Touch</h2>
-                    <p><strong>Address:</strong> Plot 123, Admiralty Way, Lekki Phase 1, Lagos</p>
-                    <p><strong>Phone:</strong> +234 801 234 5678</p>
-                    <p><strong>Email:</strong> info@urbangrille.com</p>
+                    <p><strong>Address:</strong>Festac Lagos</p>
+                    <p><strong>Phone:</strong> +234 9092039570</p>
+                    <p><strong>Email:</strong> frankizuchukwu094@gmail.com</p>
                     <p><strong>Hours:</strong> Mon-Thu: 11AM-10PM, Fri-Sun: 11AM-11PM</p>
                 </div>
 
