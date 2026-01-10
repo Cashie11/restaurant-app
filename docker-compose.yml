@@ -40,6 +40,8 @@ services:
       - "3000:3000"
     env_file:
       - .env
+    environment:
+      - REACT_APP_API_URL=${REACT_APP_API_URL:-http://localhost:8000/api}
     volumes:
       - ./frontend:/app
       - /app/node_modules

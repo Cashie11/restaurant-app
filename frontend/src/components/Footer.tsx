@@ -129,10 +129,9 @@ const Footer: React.FC = () => {
                         <div className="col-lg-4 mb-4">
                             <h6 className="text-uppercase fw-bold mb-3">Contact</h6>
                             <ul className="footer-links">
-                                <li>Plot 123, Admiralty Way</li>
-                                <li>Lekki Phase 1, Lagos</li>
-                                <li>+234 801 234 5678</li>
-                                <li>info@urbangrille.com</li>
+                                <li>Festac, Lagos</li>
+                                <li>+234 9092039570</li>
+                                <li>frankizuchukwu094@gmail.com</li>
                             </ul>
                         </div>
                     </div>

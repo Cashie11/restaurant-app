@@ -3,7 +3,7 @@ from sqlalchemy import func, desc
 from typing import List, Optional
 from datetime import datetime, timedelta
 from app.models.user import User
-from app.models.order import Order, OrderStatus
+from app.models.order import Order, OrderStatus, PaymentStatus
 
 
 def get_all_users(
@@ -163,9 +163,10 @@ def get_dashboard_stats(db: Session) -> dict:
         Order.status == OrderStatus.DELIVERED
     ).scalar()
     
-    # Total revenue (sum of all delivered orders)
+    # Total revenue (sum of all PAID orders that are not CANCELLED)
     total_revenue = db.query(func.sum(Order.total_amount)).filter(
-        Order.status == OrderStatus.DELIVERED
+        Order.payment_status == PaymentStatus.PAID,
+        Order.status != OrderStatus.CANCELLED
     ).scalar() or 0
     
     # New users this week
