@@ -23,10 +23,12 @@ class EmailService:
         if not self.enabled:
             # Simulation mode for development
             print("="*50)
-            print(f"📧 [EMAIL SIMULATION] To: {to_email}")
+            print(f"[EMAIL SIMULATION] To: {to_email}")
             print(f"Subject: {subject}")
             print("-" * 20)
-            print(html_content)
+            # Don't print the full HTML body — it may contain non-ASCII
+            # characters (e.g. the Naira sign) that break the Windows console.
+            print(f"[HTML body omitted ({len(html_content)} chars)]")
             print("="*50)
             logger.info(f"Email simulated to {to_email}")
             return True
@@ -59,27 +61,29 @@ class EmailService:
             
             # Fallback to console simulation on failure
             print("="*50)
-            print(f"📧 [EMAIL FAILED - FALLBACK SIMULATION] To: {to_email}")
+            print(f"[EMAIL FAILED - FALLBACK SIMULATION] To: {to_email}")
             print(f"Subject: {subject}")
             print("-" * 20)
-            print(html_content)
+            # Don't print the full HTML body — it may contain non-ASCII
+            # characters (e.g. the Naira sign) that break the Windows console.
+            print(f"[HTML body omitted ({len(html_content)} chars)]")
             print("="*50)
             
             return False
 
     def send_otp_email(self, to_email: str, otp_code: str):
         """Send OTP verification email"""
-        subject = "Fresh Fork - Verify Your Account"
+        subject = "Urban Grille - Verify Your Account"
         html_content = f"""
         <html>
             <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
                 <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
                     <div style="text-align: center; margin-bottom: 30px;">
-                        <h1 style="color: #FF6B35;">Fresh Fork</h1>
+                        <h1 style="color: #FF6B35;">Urban Grille</h1>
                     </div>
                     
                     <p>Hello,</p>
-                    <p>Thank you for registering with Fresh Fork! To complete your signup, please verify your email address using the code below:</p>
+                    <p>Thank you for registering with Urban Grille! To complete your signup, please verify your email address using the code below:</p>
                     
                     <div style="background-color: #f8f9fa; border-radius: 8px; padding: 20px; text-align: center; margin: 30px 0;">
                         <span style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #2d3436;">{otp_code}</span>
@@ -91,7 +95,7 @@ class EmailService:
                     <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
                     
                     <p style="font-size: 12px; color: #999; text-align: center;">
-                        &copy; {datetime.now().year} Fresh Fork Restaurant. All rights reserved.
+                        &copy; {datetime.now().year} Urban Grille Restaurant. All rights reserved.
                     </p>
                 </div>
             </body>
@@ -107,17 +111,17 @@ class EmailService:
             <tr>
                 <td style="padding: 10px; border-bottom: 1px solid #eee;">{item['name']}</td>
                 <td style="padding: 10px; border-bottom: 1px solid #eee;">x{item['quantity']}</td>
-                <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">${item['price']:.2f}</td>
+                <td style="padding: 10px; border-bottom: 1px solid #eee; text-align: right;">₦{item['price']:.2f}</td>
             </tr>
             """
 
-        subject = f"Fresh Fork - Order Confirmation #{order_details.get('id')}"
+        subject = f"Urban Grille - Order Confirmation #{order_details.get('id')}"
         html_content = f"""
         <html>
             <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
                 <div style="max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
                     <div style="text-align: center; margin-bottom: 30px;">
-                        <h1 style="color: #FF6B35;">Fresh Fork</h1>
+                        <h1 style="color: #FF6B35;">Urban Grille</h1>
                         <h2 style="color: #00b894;">Order Confirmed!</h2>
                     </div>
                     
@@ -144,7 +148,7 @@ class EmailService:
                             <tfoot>
                                 <tr>
                                     <td colspan="2" style="padding: 10px; text-align: right; font-weight: bold;">Total:</td>
-                                    <td style="padding: 10px; text-align: right; font-weight: bold; color: #FF6B35;">${order_details.get('total'):.2f}</td>
+                                    <td style="padding: 10px; text-align: right; font-weight: bold; color: #FF6B35;">₦{order_details.get('total'):.2f}</td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -159,7 +163,7 @@ class EmailService:
                     <hr style="border: none; border-top: 1px solid #eee; margin: 30px 0;">
                     
                     <p style="font-size: 12px; color: #999; text-align: center;">
-                        &copy; {datetime.now().year} Fresh Fork Restaurant. All rights reserved.
+                        &copy; {datetime.now().year} Urban Grille Restaurant. All rights reserved.
                     </p>
                 </div>
             </body>

@@ -20,12 +20,14 @@ const Cart: React.FC = () => {
     if (!cart || cart.items.length === 0) {
         return (
             <div className="container py-5">
-                <div className="text-center">
-                    <i className="ci-shopping-cart fs-1 text-muted mb-3"></i>
-                    <h3>Your cart is empty</h3>
+                <div className="text-center py-5">
+                    <div className="d-inline-flex p-4 rounded-circle mb-3" style={{ background: '#faf7f4' }}>
+                        <i className="bi bi-bag fs-1" style={{ color: '#c9c1b8' }}></i>
+                    </div>
+                    <h3 className="fw-bold">Your cart is empty</h3>
                     <p className="text-muted">Add some delicious items to get started!</p>
-                    <Link to="/" className="btn btn-primary mt-3">
-                        Browse Products
+                    <Link to="/menu" className="btn btn-primary rounded-pill px-4 mt-3">
+                        <i className="bi bi-grid me-2"></i>Browse Menu
                     </Link>
                 </div>
             </div>
@@ -102,8 +104,8 @@ const Cart: React.FC = () => {
 
                                             {/* Total & Actions */}
                                             <div className="col-6 col-md-3">
-                                                <div className="d-flex align-items-center justify-content-end">
-                                                    <span className="fw-bold fs-lg text-dark me-3">
+                                                <div className="d-flex flex-wrap align-items-center justify-content-end">
+                                                    <span className="fw-bold fs-lg text-dark me-3 text-nowrap">
                                                         ₦{(item.price_at_addition * item.quantity).toLocaleString()}
                                                     </span>
                                                     <button
@@ -153,7 +155,7 @@ const Cart: React.FC = () => {
 
                                 <div className="d-flex justify-content-between mb-3">
                                     <span className="text-muted">Delivery Fee</span>
-                                    <span className="text-success fw-bold">Free</span>
+                                    <span className="text-muted fst-italic small">Calculated at checkout</span>
                                 </div>
 
                                 <div className="border-top border-bottom py-3 mb-4">
@@ -179,7 +181,7 @@ const Cart: React.FC = () => {
 
                                 <div className="text-center">
                                     <p className="small text-muted mb-0">
-                                        <i className="ci-security-check me-1"></i>
+                                        <i className="bi bi-shield-check me-1"></i>
                                         Secure Checkout
                                     </p>
                                 </div>

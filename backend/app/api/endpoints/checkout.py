@@ -10,6 +10,7 @@ from app.schemas.order import OrderCreateFromCart, OrderItemResponse
 from app.utils.email import email_service
 import json
 import httpx
+import logging
 from app.core.config import settings
 from app.models.order import PaymentMethod
 
@@ -22,23 +23,20 @@ async def verify_paystack_payment(reference: str) -> bool:
         "Authorization": f"Bearer {settings.PAYSTACK_SECRET_KEY}",
         "Content-Type": "application/json",
     }
-    
-    print(f"DEBUG: Verifying Paystack Ref: {reference}")
-    print(f"DEBUG: Using Secret Key: {settings.PAYSTACK_SECRET_KEY[:5]}***") # PARTIAL LOGGING FOR SAFETY
 
     async with httpx.AsyncClient() as client:
         try:
             response = await client.get(url, headers=headers)
-            print(f"DEBUG: Paystack Response Status: {response.status_code}")
-            print(f"DEBUG: Paystack Response Body: {response.text}")
-            
             if response.status_code == 200:
                 data = response.json()
                 if data.get("status") is True and data.get("data", {}).get("status") == "success":
                     return True
+            logging.getLogger(__name__).warning(
+                "Paystack verification failed: HTTP %s", response.status_code
+            )
             return False
         except Exception as e:
-            print(f"DEBUG: Error verifying payment: {e}")
+            logging.getLogger(__name__).error("Paystack verification error: %s", e)
             return False
 
 def calculate_delivery_fee(address_data: dict, subtotal: float) -> float:
@@ -159,26 +157,14 @@ async def place_order(
             "price": cart_item.price_at_addition
         })
     
-    # 5. Clear Cart
-    db.query(Cart).filter(Cart.user_id == current_user.id).delete()
-    # Also need to delete items if delete cascade isn't perfect, but usually it is if specific
-    # Actually removing the cart itself might be aggressive if we want to keep persistent cart ID, 
-    # but the usual pattern is empting items. 
-    # Let's just remove items.
-    # db.query(CartItem).filter(CartItem.cart_id == cart.id).delete() 
-    # Re-reading logic: The cart object usually stays. 
-    # Let's verify relationships. user.addresses... 
-    # In endpoints/cart.py verify clear_cart implementation:
-    # crud_cart.clear_cart(db, current_user.id)
-    # So I should use that or manual delete.
-    # Let's use manual delete of items for now to be safe.
+    # 5. Clear cart items (keep the cart itself for future use)
     from app.models.cart import CartItem
     db.query(CartItem).filter(CartItem.cart_id == cart.id).delete()
-    
+
     db.commit()
     db.refresh(order)
     
-    # 6. Send Email
+    # 6. Send Email (best-effort — a failure here must not fail the order)
     email_data = {
         "id": order.id,
         "customer_name": f"{current_user.first_name} {current_user.last_name}",
@@ -188,9 +174,11 @@ async def place_order(
         "status": "Confirmed",
         "items": order_items_data
     }
-    
-    # Send in background (or await if simple)
-    # For now, simplistic sync call (or async wrapped)
-    email_service.send_order_confirmation(current_user.email, email_data)
-    
+
+    try:
+        email_service.send_order_confirmation(current_user.email, email_data)
+    except Exception:
+        # Never let an email failure roll back a successfully placed order.
+        pass
+
     return {"message": "Order placed successfully", "order_id": order.id}

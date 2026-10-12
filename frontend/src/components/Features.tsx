@@ -1,92 +1,81 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Features: React.FC = () => {
-  const categories = [
-    {
-      id: 1,
-      title: 'Only fresh fish to your table',
-      subtitle: '124 products',
-      icon: '🐟',
-      image: '/assets/img/home/grocery/features/01.png',
-      bgColor: '#fff0f0' // Light pink
-    },
-    {
-      id: 2,
-      title: 'Products for Easter table',
-      subtitle: '97 products',
-      icon: '🐰',
-      image: '/assets/img/home/grocery/features/02.png',
-      bgColor: '#f1fcf0' // Light green
-    },
-    {
-      id: 3,
-      title: 'Organic vegetables from local farms',
-      subtitle: '156 products',
-      icon: '🥕',
-      image: '/assets/img/home/grocery/features/03.png',
-      bgColor: '#fbf7f0' // Light beige
-    },
-    {
-      id: 4,
-      title: 'Fresh bakery goods daily',
-      subtitle: '89 products',
-      icon: '🥖',
-      image: '/assets/img/home/grocery/features/04.png',
-      bgColor: '#f0f7ff' // Light blue
-    }
-  ];
+    const categories = [
+        { id: 1, title: 'Fresh Fish to Your Table', subtitle: '124 products', icon: 'bi-water', tint: '#fff0f0', accent: '#e74c3c' },
+        { id: 2, title: 'Festive Specials', subtitle: '97 products', icon: 'bi-gift', tint: '#f1fcf0', accent: '#16a34a' },
+        { id: 3, title: 'Organic Local Vegetables', subtitle: '156 products', icon: 'bi-flower1', tint: '#fbf7f0', accent: '#d97706' },
+        { id: 4, title: 'Fresh Bakery Daily', subtitle: '89 products', icon: 'bi-egg-fried', tint: '#f0f7ff', accent: '#2563eb' },
+    ];
 
-  return (
-    <section className="container pt-4 pb-5 mb-2 mb-sm-3 mb-lg-4 mb-xl-5">
-      <div className="row g-4">
-        {categories.map((category) => (
-          <div key={category.id} className="col-md-6 col-lg-3">
-            <div
-              className="position-relative d-flex flex-column justify-content-between h-100 rounded-4 overflow-hidden p-4"
-              style={{
-                backgroundColor: category.bgColor,
-                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-                cursor: 'pointer',
-                minHeight: '260px'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-5px)';
-                e.currentTarget.style.boxShadow = '0 10px 20px rgba(0,0,0,0.05)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-                e.currentTarget.style.boxShadow = 'none';
-              }}
-            >
-              <div className="z-2">
-                <span className="d-block fs-xs fw-medium text-muted mb-2 text-uppercase" style={{ letterSpacing: '0.5px' }}>
-                  {category.subtitle}
-                </span>
-                <h3 className="h5 fw-bold mb-3 text-dark-emphasis" style={{ maxWidth: '85%' }}>
-                  {category.title}
-                </h3>
-                <a href="#!" className="btn-link text-decoration-none fw-semibold d-inline-flex align-items-center" style={{ color: '#2d3436' }}>
-                  Shop now <i className="ci-arrow-right fs-sm ms-2"></i>
-                </a>
-              </div>
+    return (
+        <>
+            <style>{`
+                .ug-feature-card {
+                    position: relative;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: space-between;
+                    height: 100%;
+                    min-height: 240px;
+                    border-radius: 20px;
+                    padding: 26px;
+                    overflow: hidden;
+                    border: 1px solid rgba(0,0,0,0.04);
+                    transition: transform 0.25s ease, box-shadow 0.25s ease;
+                }
+                .ug-feature-card:hover { transform: translateY(-6px); box-shadow: 0 18px 36px rgba(0,0,0,0.08); }
+                .ug-feature-icon {
+                    width: 52px;
+                    height: 52px;
+                    border-radius: 15px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    font-size: 24px;
+                    color: #fff;
+                    margin-bottom: 16px;
+                    box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+                }
+                .ug-feature-link {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    font-weight: 600;
+                    font-size: 14px;
+                    color: #2d3436;
+                    text-decoration: none;
+                }
+                .ug-feature-link:hover { color: #FF6B35; }
+            `}</style>
 
-              <div
-                className="position-absolute bottom-0 end-0 mb-3 me-3"
-                style={{
-                  fontSize: '3.5rem',
-                  filter: 'drop-shadow(0 4px 6px rgba(0,0,0,0.1))',
-                  transform: 'rotate(-10deg)',
-                  transition: 'transform 0.3s ease'
-                }}
-              >
-                {category.icon}
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
+            <section className="container pt-4 pb-4 mb-2">
+                <div className="row g-4">
+                    {categories.map((category) => (
+                        <div key={category.id} className="col-sm-6 col-lg-3">
+                            <div className="ug-feature-card" style={{ backgroundColor: category.tint }}>
+                                <div>
+                                    <div className="ug-feature-icon" style={{ background: category.accent }}>
+                                        <i className={`bi ${category.icon}`}></i>
+                                    </div>
+                                    <span className="d-block text-uppercase fw-semibold mb-2" style={{ fontSize: '12px', letterSpacing: '0.5px', color: '#8a8f94' }}>
+                                        {category.subtitle}
+                                    </span>
+                                    <h3 className="h5 fw-bold mb-3" style={{ maxWidth: '85%', color: '#2d3436' }}>
+                                        {category.title}
+                                    </h3>
+                                </div>
+                                <Link to="/menu" className="ug-feature-link">
+                                    Shop now <i className="bi bi-arrow-right"></i>
+                                </Link>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
+        </>
+    );
 };
 
 export default Features;

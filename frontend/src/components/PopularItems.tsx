@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 import { useTouchSwipe } from '../hooks/useTouchSwipe';
 import { productService, Product as ApiProduct } from '../services/productService';
 
@@ -226,8 +224,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, handleAddToCart, add
 
 const PopularItems: React.FC = () => {
   const { addToCart } = useCart();
-  const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
   const [addingId, setAddingId] = useState<number | null>(null);
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -270,11 +266,6 @@ const PopularItems: React.FC = () => {
     e.preventDefault();
     e.stopPropagation();
 
-    if (!isAuthenticated) {
-      navigate('/signin');
-      return;
-    }
-
     try {
       setAddingId(productId);
       await addToCart(productId, 1);
@@ -309,7 +300,7 @@ const PopularItems: React.FC = () => {
             className="position-absolute top-50 start-0 translate-middle-y d-flex align-items-center justify-content-center border-0"
             style={{
               zIndex: 10,
-              left: '-25px',
+              left: '0px',
               width: '48px',
               height: '48px',
               borderRadius: '50%',
@@ -330,7 +321,7 @@ const PopularItems: React.FC = () => {
             className="position-absolute top-50 end-0 translate-middle-y d-flex align-items-center justify-content-center border-0"
             style={{
               zIndex: 10,
-              right: '-25px',
+              right: '0px',
               width: '48px',
               height: '48px',
               borderRadius: '50%',
@@ -352,8 +343,11 @@ const PopularItems: React.FC = () => {
               style={{
                 width: `${items.length * 100}%`,
                 transform: `translateX(-${swipe.currentIndex * (100 / items.length)}%)`,
-                transition: 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+                transition: swipe.isDragging ? 'none' : 'transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
               }}
+              onTouchStart={swipe.handleTouchStart}
+              onTouchMove={swipe.handleTouchMove}
+              onTouchEnd={swipe.handleTouchEnd}
             >
               {items.map((product) => (
                 <div key={product.id} className="px-2" style={{ width: `${100 / items.length}%` }}>

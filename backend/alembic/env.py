@@ -19,7 +19,12 @@ import os
 sys.path.append(os.getcwd())
 
 from app.core.database import Base
+from app.core.config import settings
 from app.models import *  # Import all models to ensure they are registered
+
+# Use the same database URL as the application (from .env), instead of the
+# hardcoded value in alembic.ini. This keeps migrations and the app in sync.
+config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 
 # add your model's MetaData object here
 # for 'autogenerate' support

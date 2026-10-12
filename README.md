@@ -47,9 +47,21 @@ The application will be available at:
 ## Development Setup
 
 ### Environment Variables
-Copy `.env.example` to `.env` and update with your values:
+Copy the example env files to real ones (these are already git-ignored):
 ```bash
+# Backend (from the backend/ directory)
+cd backend
 cp .env.example .env
+
+# Frontend (from the frontend/ directory)
+cd ../frontend
+cp .env.example .env 2>/dev/null || true
+```
+
+The frontend `.env` should contain:
+```
+REACT_APP_API_URL=http://localhost:8000/api
+REACT_APP_PAYSTACK_PUBLIC_KEY=pk_test_placeholder
 ```
 
 ### Frontend Setup
@@ -60,13 +72,28 @@ npm start
 ```
 
 ### Backend Setup
+Requires **Python 3.11+** (tested on 3.14). Dependencies are unpinned ranges and install cleanly on recent Python.
+
 ```bash
 cd backend
 python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+source venv/bin/activate      # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
+python -m app.scripts.seed_products
+python -m app.scripts.seed_banks
+python -m app.scripts.seed_users
 uvicorn app.main:app --reload
 ```
+
+> **Note:** The backend runs on port `8000` by default. If you already have something on
+> port 8000 (e.g. Laravel Herd), run it on another port and update `REACT_APP_API_URL`:
+> ```bash
+> uvicorn app.main:app --reload --port 8010
+> ```
+
+**Seed credentials:**
+- Admin: `admin@demo.com` / `Admin@123`
+- User: `user@example.com` / `User@1234`
 
 ## API Endpoints
 - `/api/auth` - User authentication

@@ -11,20 +11,18 @@ const Signin: React.FC = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [successMessage, setSuccessMessage] = useState('');
+    const [redirectTo, setRedirectTo] = useState<string | undefined>(undefined);
 
-    const { login, isAuthenticated } = useAuth(); // Destructure isAuthenticated
+    const { login } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
 
-    // Redirect if already authenticated
     useEffect(() => {
-        if (isAuthenticated) {
-            navigate('/');
+        const state = (location.state || {}) as { message?: string; redirectTo?: string };
+        // Capture the redirect target before we clear the message from history
+        if (state.redirectTo) {
+            setRedirectTo(state.redirectTo);
         }
-    }, [isAuthenticated, navigate]);
-
-    useEffect(() => {
-        const state = (location.state || {}) as { message?: string };
         if (state.message) {
             setSuccessMessage(state.message);
             // Clear the message from history state so it doesn't persist on refresh
@@ -40,7 +38,7 @@ const Signin: React.FC = () => {
         try {
             const response = await authService.signin({ email, password });
             await login(response.access_token, response.refresh_token);
-            navigate('/');
+            navigate(redirectTo || '/');
         } catch (err: any) {
             console.error('Login error:', err);
             setError(err.response?.data?.detail || 'Failed to sign in. Please check your credentials.');
@@ -73,7 +71,7 @@ const Signin: React.FC = () => {
                         <h1 className="h2 mb-2" style={{ color: '#2d3436' }}>Welcome back</h1>
                         <div className="mb-4" style={{ color: '#636e72' }}>
                             Don't have an account?
-                            <Link className="text-decoration-none ms-2 fw-semibold" to="/signup" style={{ color: '#FF6B35' }}>Create an account</Link>
+                            <Link className="text-decoration-none ms-2 fw-semibold" to="/signup" state={{ redirectTo }} style={{ color: '#FF6B35' }}>Create an account</Link>
                         </div>
 
                         {successMessage && (

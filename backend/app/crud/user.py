@@ -38,6 +38,9 @@ def update_user(db: Session, user_id: int, user_update: UserUpdate) -> Optional[
         return None
     
     update_data = user_update.dict(exclude_unset=True)
+    # Users must not be able to escalate their own role through self-service update.
+    # Role changes are handled exclusively by the admin endpoint.
+    update_data.pop("role", None)
     for field, value in update_data.items():
         setattr(db_user, field, value)
     

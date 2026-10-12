@@ -6,6 +6,8 @@ import { CartProvider } from './context/CartContext';
 import { Toaster } from 'react-hot-toast';
 
 import AppHeader from './components/AppHeader';
+import Hero from './components/Hero';
+import Features from './components/Features';
 import Footer from './components/Footer';
 import FloatingCart from './components/FloatingCart';
 import PageTransition from './components/PageTransition';
@@ -28,6 +30,9 @@ import OrderConfirmation from './components/OrderConfirmation';
 function HomePage() {
     return (
         <div style={{ background: 'linear-gradient(to bottom, #FFF5F0 0%, #FFFFFF 100%)', minHeight: '100vh' }}>
+            <Hero />
+            <Features />
+
             {/* Popular Dishes Header */}
             <div className="container text-center mb-5 mt-5 pt-5">
                 <div style={{
@@ -73,7 +78,6 @@ function HomePage() {
 
             <SpecialProducts />
             <SpecialOffers />
-            <FloatingCart />
         </div>
     );
 }

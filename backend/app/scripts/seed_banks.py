@@ -1,6 +1,10 @@
 from sqlalchemy.orm import Session
-from app.core.database import SessionLocal, engine
+from app.core.database import SessionLocal, engine, Base
+import app.models  # noqa: F401  (register all models)
 from app.models.bank import BankAccount
+
+# Ensure tables exist before seeding (idempotent)
+Base.metadata.create_all(bind=engine)
 
 def seed_banks():
     db: Session = SessionLocal()

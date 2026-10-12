@@ -8,9 +8,13 @@ import os
 # Add parent directory to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app.core.database import SessionLocal
+from app.core.database import SessionLocal, Base, engine
+import app.models  # noqa: F401  (register all models)
 from app.models.product import Product, ProductCategory
 from app.core.security import get_password_hash
+
+# Ensure tables exist before seeding (idempotent)
+Base.metadata.create_all(bind=engine)
 
 def seed_products():
     db = SessionLocal()
@@ -287,7 +291,7 @@ def seed_products():
                 name="BBQ Chicken Wings",
                 description="Marinated chicken wings ready for the grill",
                 price=8500.00,
-                image_url="/assets/img/shop/grocery/17.png",
+                image_url="/assets/img/shop/grocery/10.png",
                 category=ProductCategory.MEAT,
                 is_offer=True,
                 discount_percentage=25,
@@ -304,7 +308,7 @@ def seed_products():
             db.add(product)
         
         db.commit()
-        print(f"✅ Successfully seeded {len(products)} products!")
+        print(f"Successfully seeded {len(products)} products!")
         
         # Print summary
         popular_count = sum(1 for p in products if p.is_popular)
@@ -317,7 +321,7 @@ def seed_products():
         print(f"- Special Offers: {offer_count}")
         
     except Exception as e:
-        print(f"❌ Error seeding products: {e}")
+        print(f"Error seeding products: {e}")
         db.rollback()
     finally:
         db.close()

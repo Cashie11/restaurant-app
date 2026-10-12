@@ -5,7 +5,7 @@ from app.api import deps
 from app.crud import admin as crud_admin
 from app.schemas.user import UserResponse, UserUpdate
 from app.schemas.order import OrderResponse, OrderStatusUpdate, OrderListResponse
-from app.models.user import User
+from app.models.user import User, UserRole
 from app.models.order import OrderStatus, Order, PaymentStatus
 
 router = APIRouter()
@@ -63,6 +63,8 @@ async def get_recent_users(
     current_user: User = Depends(deps.get_current_admin_user)
 ):
     """Get recently registered users (admin only)"""
+    users = crud_admin.get_recent_users(db, limit=limit)
+
     # Manual serialization
     serialized_users = []
     for user in users:
@@ -89,7 +91,7 @@ async def update_user(
 ):
     """Update user details (admin only)"""
     # Prevent admin from demoting themselves
-    if user_id == current_user.id and user_update.role and user_update.role != "admin":
+    if user_id == current_user.id and user_update.role and user_update.role != UserRole.ADMIN:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Cannot change your own admin role"

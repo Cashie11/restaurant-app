@@ -1,7 +1,17 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
+
+# Ensure the SQLite data directory exists before creating the engine.
+# SQLite will not create parent directories automatically.
+if settings.DATABASE_URL.startswith("sqlite:///"):
+    db_path = settings.DATABASE_URL.replace("sqlite:///", "", 1)
+    if db_path not in (":memory:", "") and not db_path.startswith("/"):
+        dirname = os.path.dirname(db_path)
+        if dirname:
+            os.makedirs(dirname, exist_ok=True)
 
 # Create database engine
 engine = create_engine(settings.DATABASE_URL)

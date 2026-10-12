@@ -3,7 +3,6 @@ import toast from 'react-hot-toast';
 import { useSearchParams } from 'react-router-dom';
 import { productService } from '../services/productService';
 import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
 import PopularItems from './PopularItems';
 
 const Menu: React.FC = () => {
@@ -16,7 +15,6 @@ const Menu: React.FC = () => {
     const [addingId, setAddingId] = useState<number | null>(null);
     const [localSearch, setLocalSearch] = useState(searchQuery);
     const { addToCart } = useCart();
-    const { user } = useAuth();
 
     useEffect(() => {
         loadProducts();
@@ -61,10 +59,6 @@ const Menu: React.FC = () => {
 
     const handleAddToCart = async (e: React.MouseEvent, productId: number) => {
         e.preventDefault();
-        if (!user) {
-            toast.error('Please login to add items to cart');
-            return;
-        }
 
         setAddingId(productId);
         try {
@@ -162,18 +156,10 @@ const Menu: React.FC = () => {
             <div className="container pb-5">
                 {/* Category Tabs - Scrollable on Mobile */}
                 <div className="mb-5 position-relative">
-                    <div className="d-flex flex-nowrap overflow-auto py-2 px-2 hide-scrollbar ps-md-0 justify-content-md-center bg-transparent"
+                    <div className="d-flex flex-wrap py-2 px-2 justify-content-center bg-transparent"
                         style={{
-                            gap: '12px',
-                            scrollbarWidth: 'none',
-                            msOverflowStyle: 'none',
-                            maskImage: 'linear-gradient(to right, transparent 0%, black 5%, black 95%, transparent 100%)'
+                            gap: '12px'
                         }}>
-                        <style>
-                            {`
-                                .hide-scrollbar::-webkit-scrollbar { display: none; }
-                            `}
-                        </style>
                         {categories.map((category) => (
                             <button
                                 key={category.id}

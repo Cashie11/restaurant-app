@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { authService } from '../services/authService';
 import { useAuth } from '../context/AuthContext';
 
@@ -21,6 +21,7 @@ const Signup: React.FC = () => {
 
     const { isAuthenticated } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
 
     // Redirect if already authenticated
     useEffect(() => {
@@ -60,7 +61,8 @@ const Signup: React.FC = () => {
                 // Success - redirect to signin (since auto-verified)
                 navigate('/signin', {
                     state: {
-                        message: 'Account created! Please sign in.'
+                        message: 'Account created! Please sign in.',
+                        redirectTo: (location.state as any)?.redirectTo
                     }
                 });
             } else {

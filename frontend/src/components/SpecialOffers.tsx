@@ -2,8 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useCart } from '../context/CartContext';
-import { useAuth } from '../context/AuthContext';
-import { useNavigate } from 'react-router-dom';
 import { useTouchSwipe } from '../hooks/useTouchSwipe';
 import { productService, Product } from '../services/productService';
 
@@ -261,8 +259,6 @@ const OfferCard: React.FC<OfferCardProps> = ({ offer, handleAddToCart, addingId 
 
 const SpecialOffers: React.FC = () => {
     const { addToCart } = useCart();
-    const { isAuthenticated } = useAuth();
-    const navigate = useNavigate();
     const [addingId, setAddingId] = useState<number | null>(null);
     const [offers, setOffers] = useState<Offer[]>([]);
     const [loading, setLoading] = useState(true);
@@ -322,11 +318,6 @@ const SpecialOffers: React.FC = () => {
         e.preventDefault(); // Prevent navigation if inside a link
         e.stopPropagation();
 
-        if (!isAuthenticated) {
-            navigate('/signin');
-            return;
-        }
-
         try {
             setAddingId(productId);
             await addToCart(productId, 1);
@@ -374,7 +365,7 @@ const SpecialOffers: React.FC = () => {
                         className="position-absolute top-50 start-0 translate-middle-y d-flex align-items-center justify-content-center border-0"
                         style={{
                             zIndex: 10,
-                            left: '-25px',
+                            left: '0px',
                             width: '48px',
                             height: '48px',
                             borderRadius: '50%',
@@ -395,7 +386,7 @@ const SpecialOffers: React.FC = () => {
                         className="position-absolute top-50 end-0 translate-middle-y d-flex align-items-center justify-content-center border-0"
                         style={{
                             zIndex: 10,
-                            right: '-25px',
+                            right: '0px',
                             width: '48px',
                             height: '48px',
                             borderRadius: '50%',

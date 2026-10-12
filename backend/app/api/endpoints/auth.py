@@ -13,6 +13,7 @@ from app.crud import user as crud_user
 from app.api.deps import get_current_active_user
 from app.models.user import User
 from app.utils.email import email_service
+from app.utils.rate_limit import auth_rate_limit
 
 router = APIRouter()
 
@@ -23,7 +24,8 @@ def generate_otp(length=6):
 async def signup(
     user_data: UserSignup,
     background_tasks: BackgroundTasks,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _rate_limit: None = Depends(auth_rate_limit),
 ):
     """
     Register a new user and send verification OTP
@@ -134,7 +136,8 @@ async def resend_otp(
 @router.post("/signin", response_model=Token)
 async def signin(
     form_data: OAuth2PasswordRequestForm = Depends(),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    _rate_limit: None = Depends(auth_rate_limit),
 ):
     """
     Login with email and password

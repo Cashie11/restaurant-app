@@ -4,10 +4,14 @@ import os
 # Add parent directory to path
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from app.core.database import SessionLocal
+from app.core.database import SessionLocal, Base, engine
+import app.models  # noqa: F401  (register all models)
 from app.models.user import User, UserRole
 from app.core.security import get_password_hash
 from app.core.config import settings
+
+# Ensure tables exist before seeding (idempotent)
+Base.metadata.create_all(bind=engine)
 
 def seed_users():
     db = SessionLocal()
@@ -45,13 +49,13 @@ def seed_users():
         db.add(regular_user)
         
         db.commit()
-        print("✅ Successfully seeded users!")
+        print("Successfully seeded users!")
         print("Credentials:")
         print(f"Admin: {settings.SEED_ADMIN_EMAIL} / [HIDDEN] (Check .env)")
         print(f"User:  {settings.SEED_USER_EMAIL}  / [HIDDEN]")
         
     except Exception as e:
-        print(f"❌ Error seeding users: {e}")
+        print(f"Error seeding users: {e}")
         db.rollback()
     finally:
         db.close()

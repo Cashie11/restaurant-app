@@ -3,30 +3,26 @@ import toast from 'react-hot-toast';
 import { contactService } from '../services/contactService';
 
 const Contact: React.FC = () => {
-    const [formData, setFormData] = useState({
-        name: '',
-        email: '',
-        message: ''
-    });
-
-    const [activeAccordion, setActiveAccordion] = useState<number | null>(null);
+    const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+    const [activeAccordion, setActiveAccordion] = useState<number | null>(0);
+    const [sending, setSending] = useState(false);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setSending(true);
         try {
             await contactService.sendMessage(formData);
-            toast.success('Thank you for your message! We\'ll get back to you soon.');
+            toast.success("Thank you for your message! We'll get back to you soon.");
             setFormData({ name: '', email: '', message: '' });
         } catch (error) {
             console.error('Failed to send message:', error);
             toast.error('Failed to send message. Please try again.');
+        } finally {
+            setSending(false);
         }
     };
 
@@ -35,231 +31,134 @@ const Contact: React.FC = () => {
     };
 
     const faqs = [
-        {
-            question: "Do you accept reservations?",
-            answer: "Yes, we accept reservations. Call us at (123) 456-7890 or book online."
-        },
-        {
-            question: "What are your opening hours?",
-            answer: "Mon-Thu: 11AM-10PM, Fri-Sun: 11AM-11PM"
-        },
-        {
-            question: "Do you offer vegetarian options?",
-            answer: "Yes, we have a variety of vegetarian and vegan dishes available."
-        },
-        {
-            question: "Is parking available?",
-            answer: "Yes, we offer complimentary parking for all our guests."
-        },
-        {
-            question: "Do you provide catering services?",
-            answer: "Yes, we offer catering for events. Contact us for more details."
-        }
+        { question: 'What areas do you deliver to?', answer: 'We deliver across Lagos — Festac, Surulere, Amuwo-Odofin, Victoria Island, Lekki, and surrounding areas.' },
+        { question: 'How do I pay for my order?', answer: 'We accept card payments through Paystack and direct bank transfer. Cash on delivery is also available in select areas.' },
+        { question: 'How long does delivery take?', answer: 'On average, 30–45 minutes within Lagos, depending on your location and order size.' },
+        { question: 'Do you offer catering for events?', answer: 'Yes! We cater for weddings, parties, and corporate events. Send us a message for a quote.' },
+        { question: 'Are your ingredients really fresh?', answer: 'Absolutely. We hit the market every morning at 5AM to source the freshest produce, meat, and spices.' },
+    ];
+
+    const contactInfo = [
+        { icon: 'bi-geo-alt', label: 'Address', value: 'Festac, Lagos, Nigeria' },
+        { icon: 'bi-telephone', label: 'Phone', value: '+234 909 203 9570', href: 'tel:+2349092039570' },
+        { icon: 'bi-envelope', label: 'Email', value: 'frankizuchukwu094@gmail.com', href: 'mailto:frankizuchukwu094@gmail.com' },
+        { icon: 'bi-clock', label: 'Opening Hours', value: 'Mon – Sun: 11AM – 11PM' },
     ];
 
     return (
         <>
-            <style>
-                {`
-                    @keyframes fadeIn {
-                        from { opacity: 0; transform: translateY(20px); }
-                        to { opacity: 1; transform: translateY(0); }
-                    }
-                    
-                    .contact-container {
-                        max-width: 800px;
-                        margin: 0 auto;
-                        padding: 2rem;
-                    }
-                    
-                    .contact-form {
-                        background: white;
-                        padding: 2rem;
-                        border-radius: 12px;
-                        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-                        margin-bottom: 3rem;
-                        animation: fadeIn 0.6s ease-out;
-                    }
-                    
-                    .form-control {
-                        border: 1px solid #e9ecef;
-                        border-radius: 8px;
-                        padding: 0.75rem;
-                        transition: all 0.3s ease;
-                    }
-                    
-                    .form-control:focus {
-                        border-color: #FF6B35;
-                        box-shadow: 0 0 0 0.2rem rgba(255, 107, 53, 0.25);
-                        outline: none;
-                    }
-                    
-                    .btn-primary {
-                        background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
-                        border: none;
-                        padding: 0.75rem 2rem;
-                        border-radius: 8px;
-                        color: white;
-                        font-weight: 600;
-                        transition: all 0.3s ease;
-                    }
-                    
-                    .btn-primary:hover {
-                        transform: translateY(-2px);
-                        box-shadow: 0 8px 25px rgba(255, 107, 53, 0.3);
-                    }
-                    
-                    .accordion {
-                        border: 1px solid #e9ecef;
-                        border-radius: 8px;
-                        overflow: hidden;
-                        margin-bottom: 1rem;
-                        animation: fadeIn 0.8s ease-out;
-                    }
-                    
-                    .accordion-header {
-                        background: white;
-                        padding: 1rem 1.5rem;
-                        cursor: pointer;
-                        display: flex;
-                        justify-content: space-between;
-                        align-items: center;
-                        transition: all 0.3s ease;
-                        border: none;
-                        width: 100%;
-                        text-align: left;
-                    }
-                    
-                    .accordion-header:hover {
-                        background: #FFF5F0;
-                    }
-                    
-                    .accordion-header.active {
-                        background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
-                        color: white;
-                    }
-                    
-                    .accordion-content {
-                        padding: 0 1.5rem;
-                        max-height: 0;
-                        overflow: hidden;
-                        transition: all 0.3s ease;
-                        background: white;
-                    }
-                    
-                    .accordion-content.active {
-                        padding: 1rem 1.5rem;
-                        max-height: 200px;
-                    }
-                    
-                    .accordion-icon {
-                        transition: transform 0.3s ease;
-                    }
-                    
-                    .accordion-icon.rotate {
-                        transform: rotate(180deg);
-                    }
-                    
-                    .contact-info {
-                        text-align: center;
-                        padding: 2rem;
-                        background: #FFF5F0;
-                        border-radius: 12px;
-                        margin-bottom: 3rem;
-                        animation: fadeIn 0.7s ease-out;
-                    }
-                    
-                    .contact-info h2 {
-                        color: #FF6B35;
-                        margin-bottom: 1rem;
-                    }
-                    
-                    .contact-info p {
-                        margin: 0.5rem 0;
-                        color: #666;
-                    }
-                `}
-            </style>
+            <style>{`
+                .ct-hero { background: #17130f; padding: 64px 0; text-align: center; color: #fff; }
+                .ct-eyebrow { color: #ffb088; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; font-size: 13px; }
+                .ct-hero h1 { font-weight: 800; letter-spacing: -1.5px; font-size: clamp(2rem, 4vw, 3rem); margin: 10px 0 8px; }
+                .ct-hero p { color: rgba(255,255,255,0.65); }
 
-            <div className="contact-container">
-                {/* Page Title */}
-                <div className="text-center mb-5">
-                    <h1 className="display-4 fw-bold mb-3">Contact Us</h1>
-                    <p className="text-muted">Get in touch with Urban Grille Restaurant</p>
+                .ct-section { padding: 56px 0; }
+                .ct-card { background: #fff; border: 1px solid #f0eae4; border-radius: 20px; }
+
+                .ct-info-item { display: flex; align-items: flex-start; gap: 14px; padding: 16px 0; border-bottom: 1px solid #f4efe9; }
+                .ct-info-item:last-child { border-bottom: none; }
+                .ct-info-icon { width: 46px; height: 46px; border-radius: 13px; background: #fff0ea; color: #FF6B35; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+                .ct-info-label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #9a9188; }
+                .ct-info-value { font-weight: 600; color: #1f1b16; }
+                .ct-info-value a { color: inherit; text-decoration: none; }
+                .ct-info-value a:hover { color: #FF6B35; }
+
+                .ct-input { border: 1.5px solid #e5ded6; border-radius: 12px; padding: 12px 14px; width: 100%; font-size: 14px; background: #fff; transition: border-color 0.2s ease, box-shadow 0.2s ease; }
+                .ct-input:focus { outline: none; border-color: #FF6B35; box-shadow: 0 0 0 4px rgba(255,107,53,0.1); }
+
+                .ct-faq { border: 1px solid #f0eae4; border-radius: 14px; margin-bottom: 10px; overflow: hidden; background: #fff; }
+                .ct-faq-btn { display: flex; justify-content: space-between; align-items: center; width: 100%; padding: 16px 18px; background: none; border: none; text-align: left; font-weight: 600; color: #1f1b16; cursor: pointer; font-size: 15px; }
+                .ct-faq-btn .chev { transition: transform 0.25s ease; color: #FF6B35; }
+                .ct-faq-btn.open .chev { transform: rotate(180deg); }
+                .ct-faq-body { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+                .ct-faq-body.open { max-height: 200px; }
+                .ct-faq-body-inner { padding: 0 18px 16px; color: #6b6258; line-height: 1.6; }
+            `}</style>
+
+            {/* Hero */}
+            <section className="ct-hero">
+                <div className="container">
+                    <span className="ct-eyebrow">Get in Touch</span>
+                    <h1>We'd Love to Hear From You</h1>
+                    <p>Questions, feedback, or catering enquiries — we're here.</p>
                 </div>
+            </section>
 
-                {/* Contact Info */}
-                <div className="contact-info">
-                    <h2 className="h4 mb-3">Get in Touch</h2>
-                    <p><strong>Address:</strong>Festac Lagos</p>
-                    <p><strong>Phone:</strong> +234 9092039570</p>
-                    <p><strong>Email:</strong> frankizuchukwu094@gmail.com</p>
-                    <p><strong>Hours:</strong> Mon-Thu: 11AM-10PM, Fri-Sun: 11AM-11PM</p>
-                </div>
-
-                {/* Contact Form */}
-                <div className="contact-form">
-                    <h2 className="h4 mb-4">Send us a Message</h2>
-                    <form onSubmit={handleSubmit}>
-                        <div className="mb-3">
-                            <label className="form-label">Name *</label>
-                            <input
-                                type="text"
-                                name="name"
-                                className="form-control"
-                                value={formData.name}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </div>
-                        <div className="mb-3">
-                            <label className="form-label">Email *</label>
-                            <input
-                                type="email"
-                                name="email"
-                                className="form-control"
-                                value={formData.email}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </div>
-                        <div className="mb-4">
-                            <label className="form-label">Message *</label>
-                            <textarea
-                                name="message"
-                                className="form-control"
-                                rows={5}
-                                value={formData.message}
-                                onChange={handleInputChange}
-                                required
-                                placeholder="How can we help you?"
-                            ></textarea>
-                        </div>
-                        <button type="submit" className="btn btn-primary">
-                            Send Message
-                        </button>
-                    </form>
-                </div>
-
-                {/* FAQ Accordion */}
-                <div>
-                    <h2 className="h4 mb-4 text-center">Frequently Asked Questions</h2>
-                    {faqs.map((faq, index) => (
-                        <div key={index} className="accordion">
-                            <button
-                                className={`accordion-header ${activeAccordion === index ? 'active' : ''}`}
-                                onClick={() => toggleAccordion(index)}
-                            >
-                                <span>{faq.question}</span>
-                                <i className={`ci-chevron-down accordion-icon ${activeAccordion === index ? 'rotate' : ''}`}></i>
-                            </button>
-                            <div className={`accordion-content ${activeAccordion === index ? 'active' : ''}`}>
-                                <p className="mb-0">{faq.answer}</p>
+            <section className="ct-section">
+                <div className="container">
+                    <div className="row g-4">
+                        {/* Contact info */}
+                        <div className="col-lg-5">
+                            <div className="ct-card p-4 p-md-5 h-100">
+                                <h4 className="fw-bold mb-4">Contact Information</h4>
+                                {contactInfo.map((item) => (
+                                    <div className="ct-info-item" key={item.label}>
+                                        <div className="ct-info-icon"><i className={`bi ${item.icon}`}></i></div>
+                                        <div>
+                                            <div className="ct-info-label">{item.label}</div>
+                                            <div className="ct-info-value">
+                                                {item.href ? <a href={item.href}>{item.value}</a> : item.value}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
-                    ))}
+
+                        {/* Form */}
+                        <div className="col-lg-7">
+                            <div className="ct-card p-4 p-md-5">
+                                <h4 className="fw-bold mb-4">Send us a Message</h4>
+                                <form onSubmit={handleSubmit}>
+                                    <div className="row g-3">
+                                        <div className="col-md-6">
+                                            <label className="form-label fw-semibold">Name</label>
+                                            <input type="text" name="name" className="ct-input" value={formData.name} onChange={handleInputChange} placeholder="Your name" required />
+                                        </div>
+                                        <div className="col-md-6">
+                                            <label className="form-label fw-semibold">Email</label>
+                                            <input type="email" name="email" className="ct-input" value={formData.email} onChange={handleInputChange} placeholder="you@example.com" required />
+                                        </div>
+                                        <div className="col-12">
+                                            <label className="form-label fw-semibold">Message</label>
+                                            <textarea name="message" className="ct-input" rows={5} value={formData.message} onChange={handleInputChange} placeholder="How can we help you?" required></textarea>
+                                        </div>
+                                        <div className="col-12">
+                                            <button type="submit" className="btn btn-primary rounded-pill px-5 py-3 fw-semibold" disabled={sending}>
+                                                {sending ? <span className="spinner-border spinner-border-sm me-2"></span> : <i className="bi bi-send me-2"></i>}
+                                                Send Message
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
+            </section>
+
+            {/* FAQ */}
+            <section className="ct-section pt-0">
+                <div className="container">
+                    <div className="text-center mb-4">
+                        <h2 className="fw-bold" style={{ color: '#1f1b16' }}>Frequently Asked Questions</h2>
+                    </div>
+                    <div style={{ maxWidth: '760px', margin: '0 auto' }}>
+                        {faqs.map((faq, index) => (
+                            <div className="ct-faq" key={index}>
+                                <button className={`ct-faq-btn ${activeAccordion === index ? 'open' : ''}`} onClick={() => toggleAccordion(index)}>
+                                    <span>{faq.question}</span>
+                                    <i className="bi bi-chevron-down chev"></i>
+                                </button>
+                                <div className={`ct-faq-body ${activeAccordion === index ? 'open' : ''}`}>
+                                    <div className="ct-faq-body-inner">{faq.answer}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
         </>
     );
 };

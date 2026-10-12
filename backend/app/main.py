@@ -17,14 +17,34 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# Configure CORS
+# Configure CORS (restrict to the configured frontend origin(s))
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[settings.FRONTEND_URL, "http://localhost:3000", "http://localhost:3001"],
+    allow_origins=[o.strip() for o in settings.FRONTEND_URL.split(",") if o.strip()],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# Cache-Control headers for performance
+@app.middleware("http")
+async def add_cache_headers(request, call_next):
+    response = await call_next(request)
+    path = request.url.path
+
+    if path.startswith("/static/"):
+        # Uploaded assets use unique UUID filenames — cache aggressively
+        response.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    elif request.method == "GET":
+        if path.startswith("/api/products"):
+            # Public read-only product catalog — short browser cache
+            response.headers["Cache-Control"] = "public, max-age=60"
+        elif path.rstrip("/") == "/api/banks":
+            # Public active bank accounts — longer cache (changes rarely)
+            response.headers["Cache-Control"] = "public, max-age=300"
+
+    return response
 
 # Include routers
 app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
@@ -49,7 +69,7 @@ app.mount("/static", StaticFiles(directory="app/static"), name="static")
 async def root():
     """Root endpoint"""
     return {
-        "message": "Welcome to Fresh Fork Restaurant API",
+        "message": "Welcome to Urban Grille Restaurant API",
         "docs": "/docs",
         "redoc": "/redoc"
     }

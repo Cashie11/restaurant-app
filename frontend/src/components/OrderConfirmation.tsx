@@ -167,7 +167,7 @@ const OrderConfirmation: React.FC = () => {
                     </div>
 
                     {/* Actions */}
-                    <div className="d-flex gap-3 justify-content-center animate__animated animate__fadeInUp animate__delay-1s">
+                    <div className="d-flex flex-wrap gap-3 justify-content-center animate__animated animate__fadeInUp animate__delay-1s">
                         <Link to="/menu" className="btn btn-primary rounded-pill px-5 py-3 fw-bold shadow-sm flex-grow-1">
                             Browse Menu
                         </Link>
@@ -245,8 +245,8 @@ const OrderConfirmation: React.FC = () => {
                             </div>
                             <hr className="my-2 border-light-subtle" />
                             {bank ? (
-                                <div className="d-flex align-items-center justify-content-between">
-                                    <div className="d-flex align-items-center">
+                                <div className="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                                    <div className="d-flex align-items-center flex-wrap gap-3">
                                         <div className="me-3">
                                             <div className="small text-muted text-uppercase fw-bold" style={{ fontSize: '0.7rem' }}>Bank Name</div>
                                             <div className="fw-bold text-dark">{bank.bank_name}</div>
@@ -276,7 +276,7 @@ const OrderConfirmation: React.FC = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="d-flex gap-3 justify-content-center animate__animated animate__fadeInUp animate__delay-1s">
+                <div className="d-flex flex-wrap gap-3 justify-content-center animate__animated animate__fadeInUp animate__delay-1s">
                     <Link to="/dashboard" className="btn btn-primary rounded-pill px-5 py-3 fw-bold shadow-sm flex-grow-1">
                         Track Order
                     </Link>

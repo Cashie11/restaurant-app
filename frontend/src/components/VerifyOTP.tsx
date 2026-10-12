@@ -124,13 +124,13 @@ const VerifyOTP: React.FC = () => {
                                 )}
 
                                 <form onSubmit={handleVerify}>
-                                    <div className="d-flex justify-content-between mb-4 gap-2">
+                                    <div className="d-flex justify-content-between mb-4 gap-1">
                                         {otp.map((data, index) => (
                                             <input
                                                 key={index}
                                                 id={`otp-${index}`}
                                                 type="text"
-                                                className="form-control form-control-lg text-center fw-bold fs-3 border-secondary"
+                                                className="form-control form-control-lg text-center fw-bold fs-3 border-secondary px-0"
                                                 maxLength={1}
                                                 value={data}
                                                 onChange={(e) => handleChange(e.target, index)}

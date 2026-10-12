@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+import { usePaystackPayment } from 'react-paystack';
 import { bankService, BankAccount } from '../services/bankService';
 import { nigerianStates } from '../data/nigerianStates';
 import { API_BASE_URL } from '../api/axios';
@@ -28,10 +29,10 @@ const Checkout: React.FC = () => {
 
     const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([]);
     const [selectedBankId, setSelectedBankId] = useState<number | null>(null);
-    const [showSuccessModal, setShowSuccessModal] = useState(false);
-    const [currentOrderId, setCurrentOrderId] = useState<number | null>(null);
     const [deliveryFee, setDeliveryFee] = useState(0);
     const [orderPlaced, setOrderPlaced] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState<'bank_transfer' | 'card'>('bank_transfer');
+    const [paystackReference] = useState(() => `UG-${Date.now()}`);
 
     // Calculate delivery fee
     useEffect(() => {
@@ -46,6 +47,19 @@ const Checkout: React.FC = () => {
     }, [formData.state, total]);
 
     const finalTotal = total + deliveryFee;
+
+    // Paystack integration (card payments). Amount must be in kobo (Naira * 100).
+    const paystackPublicKey = process.env.REACT_APP_PAYSTACK_PUBLIC_KEY || 'pk_test_placeholder';
+    const initializePayment = usePaystackPayment({
+        publicKey: paystackPublicKey,
+        email: user?.email || '',
+        amount: Math.round(finalTotal * 100),
+        currency: 'NGN',
+        reference: paystackReference,
+        metadata: {
+            customer_name: `${user?.first_name || ''} ${user?.last_name || ''}`.trim()
+        }
+    });
 
     useEffect(() => {
         const loadBanks = async () => {
@@ -62,7 +76,7 @@ const Checkout: React.FC = () => {
 
     useEffect(() => {
         if (!user) {
-            navigate('/signin', { state: { message: 'Please sign in to checkout.' } });
+            navigate('/signin', { state: { message: 'Please sign in to checkout.', redirectTo: '/checkout' } });
         } else if (items.length === 0 && !orderPlaced) {
             navigate('/cart');
         }
@@ -81,26 +95,25 @@ const Checkout: React.FC = () => {
         return /^(0|\+234)\d{9,11}$/.test(phone);
     };
 
-    const handlePlaceOrder = async () => {
-        if (!selectedBankId) {
-            toast.error("Please select a bank to make payment to.");
-            return;
-        }
-
+    const placeOrder = async (method: 'bank_transfer' | 'card', paymentReference?: string) => {
         setLoading(true);
         try {
-            const orderData = {
+            const orderData: any = {
                 delivery_address: {
                     street: formData.street,
                     city: formData.city,
                     state: formData.state,
                     zip_code: "000000", // Default for now
                     country: "Nigeria", // Fixed
-                    phone: formData.phone // Added to notes or separate field if backend supports
+                    phone: formData.phone
                 },
-                payment_method: 'bank_transfer',
-                notes: `Phone: ${formData.phone}. ${formData.notes}` // Appending phone to notes for now as backend might strict
+                payment_method: method,
+                notes: `Phone: ${formData.phone}. ${formData.notes}`
             };
+
+            if (paymentReference) {
+                orderData.payment_reference = paymentReference;
+            }
 
             const response = await axios.post(`${API_BASE_URL}/checkout/place-order`, orderData, {
                 headers: { Authorization: `Bearer ${token}` }
@@ -109,17 +122,15 @@ const Checkout: React.FC = () => {
             setOrderPlaced(true);
             await refreshCart();
 
-            // Show pending message as requested
             toast.success("Order Pending...", {
                 icon: '⏳',
                 duration: 2000
             });
 
-            // Small delay to let user see the message
             setTimeout(() => {
                 navigate('/order-confirmation', {
                     state: {
-                        orderId: response.data.order_id, // Fixed: backend returns order_id not id
+                        orderId: response.data.order_id,
                         bank: bankAccounts.find(b => b.id === selectedBankId),
                         total: finalTotal
                     }
@@ -135,6 +146,25 @@ const Checkout: React.FC = () => {
         }
     };
 
+    const handleBankTransferPlaceOrder = () => {
+        if (!selectedBankId) {
+            toast.error("Please select a bank to make payment to.");
+            return;
+        }
+        placeOrder('bank_transfer');
+    };
+
+    const handleCardPayment = () => {
+        initializePayment({
+            onSuccess: (reference: any) => {
+                placeOrder('card', reference?.reference);
+            },
+            onClose: () => {
+                toast.error('Payment was cancelled');
+            }
+        });
+    };
+
     const moveStep = (nextStep: number) => {
         if (nextStep === 2) {
             if (!formData.street || !formData.city || !formData.state || !formData.phone) {
@@ -145,6 +175,10 @@ const Checkout: React.FC = () => {
                 toast.error("Please enter a valid Nigerian phone number.");
                 return;
             }
+        }
+        if (nextStep === 3 && paymentMethod === 'bank_transfer' && !selectedBankId) {
+            toast.error("Please select a bank to make payment to.");
+            return;
         }
         setStep(nextStep);
     };
@@ -218,63 +252,120 @@ const Checkout: React.FC = () => {
 
                             {step === 2 && (
                                 <div className="animate__animated animate__fadeIn">
-                                    <h3 className="mb-4 fw-bold text-dark">Select Bank for Transfer</h3>
-                                    <p className="text-muted mb-4">You will make a direct transfer to the selected account.</p>
+                                    <h3 className="mb-4 fw-bold text-dark">Payment Method</h3>
+                                    <p className="text-muted mb-4">Choose how you'd like to pay for your order.</p>
 
-                                    <div className="d-flex flex-column gap-3">
-                                        {bankAccounts.map(bank => (
-                                            <div
-                                                key={bank.id}
-                                                onClick={() => setSelectedBankId(bank.id)}
-                                                className={`card cursor-pointer border-0 rounded-4 transition-all ${selectedBankId === bank.id ? 'bg-white shadow-lg ring-2 ring-primary' : 'bg-white shadow-sm hover-shadow'}`}
-                                                style={{
-                                                    transition: 'all 0.2s',
-                                                    border: selectedBankId === bank.id ? '2px solid #fd7e14' : '1px solid #f1f1f1',
-                                                    transform: selectedBankId === bank.id ? 'scale(1.02)' : 'none'
-                                                }}
-                                            >
-                                                <div className="card-body p-4 d-flex align-items-center justify-content-between">
-                                                    <div className="d-flex align-items-center">
-                                                        <div className={`rounded-circle p-3 me-4 d-flex align-items-center justify-content-center ${selectedBankId === bank.id ? 'bg-primary text-white' : 'bg-light text-secondary'}`} style={{ width: 64, height: 64, transition: 'all 0.3s' }}>
-                                                            <i className="bi bi-bank fs-3"></i>
-                                                        </div>
-                                                        <div>
-                                                            <h5 className="mb-1 fw-bold text-dark">{bank.bank_name}</h5>
-                                                            <div className="text-secondary small text-uppercase fw-bold ls-1 mb-1">{bank.account_name}</div>
+                                    <div className="d-flex flex-column gap-3 mb-4">
+                                        <div
+                                            onClick={() => setPaymentMethod('card')}
+                                            className="card cursor-pointer border-0 rounded-4 bg-white shadow-sm"
+                                            style={{ transition: 'all 0.2s', border: paymentMethod === 'card' ? '2px solid #fd7e14' : '1px solid #f1f1f1' }}
+                                        >
+                                            <div className="card-body p-4 d-flex align-items-center justify-content-between">
+                                                <div className="d-flex align-items-center">
+                                                    <div className={`rounded-circle p-3 me-4 d-flex align-items-center justify-content-center ${paymentMethod === 'card' ? 'bg-primary text-white' : 'bg-light text-secondary'}`} style={{ width: 64, height: 64 }}>
+                                                        <i className="bi bi-credit-card fs-3"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h5 className="mb-1 fw-bold text-dark">Pay with Card</h5>
+                                                        <div className="text-secondary small">Instant payment via Paystack (Visa, Mastercard, Verve)</div>
+                                                    </div>
+                                                </div>
+                                                <div className="d-none d-md-block">
+                                                    {paymentMethod === 'card' ? (
+                                                        <i className="bi bi-check-circle-fill text-primary display-6 animate__animated animate__zoomIn"></i>
+                                                    ) : (
+                                                        <i className="bi bi-circle text-muted fs-3"></i>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div
+                                            onClick={() => setPaymentMethod('bank_transfer')}
+                                            className="card cursor-pointer border-0 rounded-4 bg-white shadow-sm"
+                                            style={{ transition: 'all 0.2s', border: paymentMethod === 'bank_transfer' ? '2px solid #fd7e14' : '1px solid #f1f1f1' }}
+                                        >
+                                            <div className="card-body p-4 d-flex align-items-center justify-content-between">
+                                                <div className="d-flex align-items-center">
+                                                    <div className={`rounded-circle p-3 me-4 d-flex align-items-center justify-content-center ${paymentMethod === 'bank_transfer' ? 'bg-primary text-white' : 'bg-light text-secondary'}`} style={{ width: 64, height: 64 }}>
+                                                        <i className="bi bi-bank2 fs-3"></i>
+                                                    </div>
+                                                    <div>
+                                                        <h5 className="mb-1 fw-bold text-dark">Bank Transfer</h5>
+                                                        <div className="text-secondary small">Direct transfer to one of our bank accounts</div>
+                                                    </div>
+                                                </div>
+                                                <div className="d-none d-md-block">
+                                                    {paymentMethod === 'bank_transfer' ? (
+                                                        <i className="bi bi-check-circle-fill text-primary display-6 animate__animated animate__zoomIn"></i>
+                                                    ) : (
+                                                        <i className="bi bi-circle text-muted fs-3"></i>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {paymentMethod === 'bank_transfer' && (
+                                        <>
+                                            <h5 className="fw-bold text-dark mb-3">Select Bank</h5>
+                                            <div className="d-flex flex-column gap-3">
+                                                {bankAccounts.map(bank => (
+                                                    <div
+                                                        key={bank.id}
+                                                        onClick={() => setSelectedBankId(bank.id)}
+                                                        className={`card cursor-pointer border-0 rounded-4 transition-all ${selectedBankId === bank.id ? 'bg-white shadow-lg ring-2 ring-primary' : 'bg-white shadow-sm hover-shadow'}`}
+                                                        style={{
+                                                            transition: 'all 0.2s',
+                                                            border: selectedBankId === bank.id ? '2px solid #fd7e14' : '1px solid #f1f1f1',
+                                                            transform: selectedBankId === bank.id ? 'scale(1.02)' : 'none'
+                                                        }}
+                                                    >
+                                                        <div className="card-body p-4 d-flex align-items-center justify-content-between">
                                                             <div className="d-flex align-items-center">
-                                                                <span className="font-monospace fs-5 fw-bold text-dark me-2">{bank.account_number}</span>
-                                                                <button
-                                                                    className="btn btn-sm btn-light border-0 py-0 px-2 text-muted"
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        navigator.clipboard.writeText(bank.account_number);
-                                                                        toast.success("Copied!");
-                                                                    }}
-                                                                >
-                                                                    <i className="bi bi-clipboard"></i>
-                                                                </button>
+                                                                <div className={`rounded-circle p-3 me-3 flex-shrink-0 d-flex align-items-center justify-content-center ${selectedBankId === bank.id ? 'bg-primary text-white' : 'bg-light text-secondary'}`} style={{ width: 64, height: 64, transition: 'all 0.3s' }}>
+                                                                    <i className="bi bi-bank fs-3"></i>
+                                                                </div>
+                                                                <div>
+                                                                    <h5 className="mb-1 fw-bold text-dark">{bank.bank_name}</h5>
+                                                                    <div className="text-secondary small text-uppercase fw-bold ls-1 mb-1 text-break">{bank.account_name}</div>
+                                                                    <div className="d-flex align-items-center flex-wrap">
+                                                                        <span className="font-monospace fs-5 fw-bold text-dark me-2">{bank.account_number}</span>
+                                                                        <button
+                                                                            className="btn btn-sm btn-light border-0 py-0 px-2 text-muted"
+                                                                            onClick={(e) => {
+                                                                                e.stopPropagation();
+                                                                                navigator.clipboard.writeText(bank.account_number);
+                                                                                toast.success("Copied!");
+                                                                            }}
+                                                                        >
+                                                                            <i className="bi bi-clipboard"></i>
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div className="d-none d-md-block">
+                                                                {selectedBankId === bank.id ? (
+                                                                    <i className="bi bi-check-circle-fill text-primary display-6 animate__animated animate__zoomIn"></i>
+                                                                ) : (
+                                                                    <i className="bi bi-circle text-muted fs-3"></i>
+                                                                )}
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div className="d-none d-md-block">
-                                                        {selectedBankId === bank.id ? (
-                                                            <i className="bi bi-check-circle-fill text-primary display-6 animate__animated animate__zoomIn"></i>
-                                                        ) : (
-                                                            <i className="bi bi-circle text-muted fs-3"></i>
-                                                        )}
-                                                    </div>
-                                                </div>
+                                                ))}
                                             </div>
-                                        ))}
-                                    </div>
 
-                                    {bankAccounts.length === 0 && (
-                                        <div className="alert alert-warning mt-3">No active bank accounts available. Please contact support.</div>
+                                            {bankAccounts.length === 0 && (
+                                                <div className="alert alert-warning mt-3">No active bank accounts available. Please contact support.</div>
+                                            )}
+                                        </>
                                     )}
 
                                     <div className="mt-4 pt-3 border-top d-flex justify-content-between">
                                         <button className="btn btn-outline-secondary rounded-pill px-4" onClick={() => setStep(1)}>Back</button>
-                                        <button className="btn btn-primary rounded-pill px-5 fw-bold shadow-sm" onClick={() => moveStep(3)} disabled={!selectedBankId}>
+                                        <button className="btn btn-primary rounded-pill px-5 fw-bold shadow-sm" onClick={() => moveStep(3)}>
                                             Review & Pay
                                         </button>
                                     </div>
@@ -302,28 +393,52 @@ const Checkout: React.FC = () => {
 
                                     <div className="mb-4 p-4 rounded-4 bg-light border border-light-subtle">
                                         <h6 className="text-secondary text-uppercase small fw-bold ls-1 mb-3">Payment Method</h6>
-                                        <div className="d-flex align-items-center">
-                                            <div className="bg-white p-3 rounded-circle shadow-sm me-3">
-                                                <i className="bi bi-bank2 text-primary fs-4"></i>
+                                        {paymentMethod === 'card' ? (
+                                            <div className="d-flex align-items-center">
+                                                <div className="bg-white p-3 rounded-circle shadow-sm me-3">
+                                                    <i className="bi bi-credit-card text-primary fs-4"></i>
+                                                </div>
+                                                <div>
+                                                    <div className="fw-bold text-dark">Card Payment (Paystack)</div>
+                                                    <div className="small text-muted">You'll be redirected to Paystack to complete payment securely.</div>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <div className="fw-bold text-dark">Bank Transfer</div>
-                                                <div className="small text-muted">To: {selectedBank?.bank_name}</div>
+                                        ) : (
+                                            <div className="d-flex align-items-center">
+                                                <div className="bg-white p-3 rounded-circle shadow-sm me-3">
+                                                    <i className="bi bi-bank2 text-primary fs-4"></i>
+                                                </div>
+                                                <div>
+                                                    <div className="fw-bold text-dark">Bank Transfer</div>
+                                                    <div className="small text-muted">To: {selectedBank?.bank_name}</div>
+                                                </div>
                                             </div>
-                                        </div>
+                                        )}
                                     </div>
 
                                     <div className="mt-4 pt-3 border-top d-flex justify-content-between">
                                         <button className="btn btn-outline-secondary rounded-pill px-4" onClick={() => setStep(2)}>Back</button>
-                                        <button
-                                            className="btn btn-success rounded-pill px-5 fw-bold shadow-lg"
-                                            onClick={handlePlaceOrder}
-                                            disabled={loading}
-                                            style={{ transform: 'scale(1.05)' }}
-                                        >
-                                            {loading ? <span className="spinner-border spinner-border-sm me-2"></span> : <i className="bi bi-lock-fill me-2"></i>}
-                                            Pay ₦{finalTotal.toLocaleString()}
-                                        </button>
+                                        {paymentMethod === 'card' ? (
+                                            <button
+                                                className="btn btn-success rounded-pill px-5 fw-bold shadow-lg"
+                                                onClick={handleCardPayment}
+                                                disabled={loading}
+                                                style={{ transform: 'scale(1.05)' }}
+                                            >
+                                                {loading ? <span className="spinner-border spinner-border-sm me-2"></span> : <i className="bi bi-credit-card me-2"></i>}
+                                                Pay ₦{finalTotal.toLocaleString()}
+                                            </button>
+                                        ) : (
+                                            <button
+                                                className="btn btn-success rounded-pill px-5 fw-bold shadow-lg"
+                                                onClick={handleBankTransferPlaceOrder}
+                                                disabled={loading}
+                                                style={{ transform: 'scale(1.05)' }}
+                                            >
+                                                {loading ? <span className="spinner-border spinner-border-sm me-2"></span> : <i className="bi bi-lock-fill me-2"></i>}
+                                                Pay ₦{finalTotal.toLocaleString()}
+                                            </button>
+                                        )}
                                     </div>
                                 </div>
                             )}

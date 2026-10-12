@@ -335,22 +335,24 @@ const AdminDashboard: React.FC = () => {
     return (
         <div style={{ background: '#f8f9fa', minHeight: '100vh' }}>
             {/* Header */}
-            <div className="bg-white border-bottom shadow-sm">
+            <div style={{ background: '#17130f', color: '#fff' }}>
                 <div className="container-fluid">
-                    <div className="d-flex justify-content-between align-items-center py-3">
-                        <div>
-                            <h4 className="mb-0">
-                                <i className="ci-settings me-2" style={{ color: '#FF6B35' }}></i>
-                                Admin Panel
-                            </h4>
-                            <small className="text-muted">Welcome, {user.first_name}!</small>
+                    <div className="d-flex flex-wrap justify-content-between align-items-center gap-3 py-3">
+                        <div className="d-flex align-items-center gap-3">
+                            <span style={{ width: 44, height: 44, borderRadius: 13, background: 'linear-gradient(135deg, #FF6B35, #F7931E)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20 }}>
+                                <i className="bi bi-shield-lock"></i>
+                            </span>
+                            <div>
+                                <h4 className="mb-0 fw-bold">Admin Panel</h4>
+                                <small style={{ color: 'rgba(255,255,255,0.55)' }}>Welcome, {user.first_name}!</small>
+                            </div>
                         </div>
-                        <div className="d-flex gap-2">
-                            <button onClick={() => navigate('/')} className="btn btn-outline-primary">
-                                <i className="ci-home me-2"></i>Back to Site
+                        <div className="d-flex flex-wrap gap-2">
+                            <button onClick={() => navigate('/')} className="btn btn-outline-light btn-sm rounded-pill px-3 text-nowrap">
+                                <i className="bi bi-house me-2"></i>Back to Site
                             </button>
-                            <button onClick={logout} className="btn btn-outline-danger">
-                                <i className="ci-sign-out me-2"></i>Sign Out
+                            <button onClick={logout} className="btn btn-outline-danger btn-sm rounded-pill px-3 text-nowrap">
+                                <i className="bi bi-box-arrow-right me-2"></i>Sign Out
                             </button>
                         </div>
                     </div>
@@ -359,63 +361,34 @@ const AdminDashboard: React.FC = () => {
 
             {/* Tabs Navigation */}
             <div className="bg-white border-bottom">
-                <div className="container-fluid px-0 px-md-3">
-                    <ul className="nav nav-tabs border-0 flex-nowrap overflow-auto" style={{ scrollbarWidth: 'none' }}>
-                        <li className="nav-item">
+                <div className="container-fluid px-3 py-2">
+                    <div className="d-flex flex-wrap gap-2">
+                        {[
+                            { id: 'dashboard', label: 'Dashboard', icon: 'bi-grid-1x2' },
+                            { id: 'products', label: 'Products', icon: 'bi-box-seam' },
+                            { id: 'users', label: 'Users', icon: 'bi-people' },
+                            { id: 'orders', label: 'Orders', icon: 'bi-receipt' },
+                            { id: 'banks', label: 'Bank Accounts', icon: 'bi-bank' },
+                            { id: 'messages', label: 'Messages', icon: 'bi-chat-dots' },
+                        ].map((tab) => (
                             <button
-                                className={`nav-link text-nowrap px-3 ${activeTab === 'dashboard' ? 'active' : ''}`}
-                                onClick={() => setActiveTab('dashboard')}
-                                style={{ border: 'none', borderBottom: activeTab === 'dashboard' ? '3px solid #FF6B35' : 'none' }}
+                                key={tab.id}
+                                className="btn btn-sm text-nowrap d-flex align-items-center gap-2 rounded-pill px-3 py-2"
+                                onClick={() => setActiveTab(tab.id)}
+                                style={{
+                                    background: activeTab === tab.id ? '#FF6B35' : 'transparent',
+                                    color: activeTab === tab.id ? '#fff' : '#6b6258',
+                                    border: 'none',
+                                    fontWeight: activeTab === tab.id ? 600 : 500,
+                                    transition: 'all 0.2s ease',
+                                }}
+                                onMouseEnter={(e) => { if (activeTab !== tab.id) e.currentTarget.style.color = '#FF6B35'; }}
+                                onMouseLeave={(e) => { if (activeTab !== tab.id) e.currentTarget.style.color = '#6b6258'; }}
                             >
-                                <i className="ci-dashboard me-2"></i>Dashboard
+                                <i className={`bi ${tab.icon}`}></i> {tab.label}
                             </button>
-                        </li>
-                        <li className="nav-item">
-                            <button
-                                className={`nav-link text-nowrap px-3 ${activeTab === 'products' ? 'active' : ''}`}
-                                onClick={() => setActiveTab('products')}
-                                style={{ border: 'none', borderBottom: activeTab === 'products' ? '3px solid #FF6B35' : 'none' }}
-                            >
-                                <i className="ci-bag me-2"></i>Products
-                            </button>
-                        </li>
-                        <li className="nav-item">
-                            <button
-                                className={`nav-link text-nowrap px-3 ${activeTab === 'users' ? 'active' : ''}`}
-                                onClick={() => setActiveTab('users')}
-                                style={{ border: 'none', borderBottom: activeTab === 'users' ? '3px solid #FF6B35' : 'none' }}
-                            >
-                                <i className="ci-user me-2"></i>Users
-                            </button>
-                        </li>
-                        <li className="nav-item">
-                            <button
-                                className={`nav-link text-nowrap px-3 ${activeTab === 'orders' ? 'active' : ''}`}
-                                onClick={() => setActiveTab('orders')}
-                                style={{ border: 'none', borderBottom: activeTab === 'orders' ? '3px solid #FF6B35' : 'none' }}
-                            >
-                                <i className="ci-cart me-2"></i>Orders
-                            </button>
-                        </li>
-                        <li className="nav-item">
-                            <button
-                                className={`nav-link text-nowrap px-3 ${activeTab === 'banks' ? 'active' : ''}`}
-                                onClick={() => setActiveTab('banks')}
-                                style={{ border: 'none', borderBottom: activeTab === 'banks' ? '3px solid #FF6B35' : 'none' }}
-                            >
-                                <i className="ci-card me-2"></i>Bank Accounts
-                            </button>
-                        </li>
-                        <li className="nav-item">
-                            <button
-                                className={`nav-link text-nowrap px-3 ${activeTab === 'messages' ? 'active' : ''}`}
-                                onClick={() => setActiveTab('messages')}
-                                style={{ border: 'none', borderBottom: activeTab === 'messages' ? '3px solid #FF6B35' : 'none' }}
-                            >
-                                <i className="ci-mail me-2"></i>Messages
-                            </button>
-                        </li>
-                    </ul>
+                        ))}
+                    </div>
                 </div>
             </div>
 
@@ -433,52 +406,60 @@ const AdminDashboard: React.FC = () => {
                         {activeTab === 'dashboard' && (
                             <div>
                                 {/* Stats Cards */}
-                                <div className="row g-4 mb-4">
-                                    <div className="col-md-3">
-                                        <div className="card border-0 shadow-sm h-100" style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
-                                            <div className="card-body text-white">
-                                                <div className="d-flex justify-content-between align-items-center mb-2">
-                                                    <h6 className="mb-0 opacity-75">Total Users</h6>
-                                                    <i className="ci-user fs-3"></i>
+                                <div className="row g-3 mb-4">
+                                    <div className="col-6 col-xl-3">
+                                        <div className="h-100 p-3 rounded-4" style={{ background: '#fff', border: '1px solid #f0eae4' }}>
+                                            <div className="d-flex align-items-start justify-content-between">
+                                                <div>
+                                                    <div className="fw-bold text-uppercase" style={{ fontSize: '11px', letterSpacing: '0.5px', color: '#9a9188' }}>Total Users</div>
+                                                    <div className="fw-bold" style={{ fontSize: '28px', color: '#1f1b16', letterSpacing: '-1px', lineHeight: 1.1, margin: '6px 0 4px' }}>{stats?.total_users || 0}</div>
+                                                    <div style={{ fontSize: '12px', color: '#9a9188' }}>+{stats?.new_users_week || 0} this week</div>
                                                 </div>
-                                                <h2 className="mb-0">{stats?.total_users || 0}</h2>
-                                                <small className="opacity-75">+{stats?.new_users_week || 0} this week</small>
+                                                <div className="d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: 48, height: 48, borderRadius: 14, background: '#fff0ea', color: '#FF6B35', fontSize: 21 }}>
+                                                    <i className="bi bi-people"></i>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-3">
-                                        <div className="card border-0 shadow-sm h-100" style={{ background: 'linear-gradient(135deg, #FF6B35 0%, #F7931E 100%)' }}>
-                                            <div className="card-body text-white">
-                                                <div className="d-flex justify-content-between align-items-center mb-2">
-                                                    <h6 className="mb-0 opacity-75">Total Orders</h6>
-                                                    <i className="ci-bag fs-3"></i>
+                                    <div className="col-6 col-xl-3">
+                                        <div className="h-100 p-3 rounded-4" style={{ background: '#fff', border: '1px solid #f0eae4' }}>
+                                            <div className="d-flex align-items-start justify-content-between">
+                                                <div>
+                                                    <div className="fw-bold text-uppercase" style={{ fontSize: '11px', letterSpacing: '0.5px', color: '#9a9188' }}>Total Orders</div>
+                                                    <div className="fw-bold" style={{ fontSize: '28px', color: '#1f1b16', letterSpacing: '-1px', lineHeight: 1.1, margin: '6px 0 4px' }}>{stats?.total_orders || 0}</div>
+                                                    <div style={{ fontSize: '12px', color: '#9a9188' }}>+{stats?.new_orders_week || 0} this week</div>
                                                 </div>
-                                                <h2 className="mb-0">{stats?.total_orders || 0}</h2>
-                                                <small className="opacity-75">+{stats?.new_orders_week || 0} this week</small>
+                                                <div className="d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: 48, height: 48, borderRadius: 14, background: '#eaf3ff', color: '#2563eb', fontSize: 21 }}>
+                                                    <i className="bi bi-bag"></i>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-3">
-                                        <div className="card border-0 shadow-sm h-100" style={{ background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)' }}>
-                                            <div className="card-body text-white">
-                                                <div className="d-flex justify-content-between align-items-center mb-2">
-                                                    <h6 className="mb-0 opacity-75">Pending Orders</h6>
-                                                    <i className="ci-time fs-3"></i>
+                                    <div className="col-6 col-xl-3">
+                                        <div className="h-100 p-3 rounded-4" style={{ background: '#fff', border: '1px solid #f0eae4' }}>
+                                            <div className="d-flex align-items-start justify-content-between">
+                                                <div>
+                                                    <div className="fw-bold text-uppercase" style={{ fontSize: '11px', letterSpacing: '0.5px', color: '#9a9188' }}>Pending Orders</div>
+                                                    <div className="fw-bold" style={{ fontSize: '28px', color: '#1f1b16', letterSpacing: '-1px', lineHeight: 1.1, margin: '6px 0 4px' }}>{stats?.pending_orders || 0}</div>
+                                                    <div style={{ fontSize: '12px', color: '#9a9188' }}>Needs attention</div>
                                                 </div>
-                                                <h2 className="mb-0">{stats?.pending_orders || 0}</h2>
-                                                <small className="opacity-75">Needs attention</small>
+                                                <div className="d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: 48, height: 48, borderRadius: 14, background: '#fff6e5', color: '#d97706', fontSize: 21 }}>
+                                                    <i className="bi bi-clock"></i>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="col-md-3">
-                                        <div className="card border-0 shadow-sm h-100" style={{ background: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' }}>
-                                            <div className="card-body text-white">
-                                                <div className="d-flex justify-content-between align-items-center mb-2">
-                                                    <h6 className="mb-0 opacity-75">Total Revenue</h6>
-                                                    <i className="ci-dollar fs-3"></i>
+                                    <div className="col-6 col-xl-3">
+                                        <div className="h-100 p-3 rounded-4" style={{ background: '#fff', border: '1px solid #f0eae4' }}>
+                                            <div className="d-flex align-items-start justify-content-between">
+                                                <div>
+                                                    <div className="fw-bold text-uppercase" style={{ fontSize: '11px', letterSpacing: '0.5px', color: '#9a9188' }}>Total Revenue</div>
+                                                    <div className="fw-bold" style={{ fontSize: '26px', color: '#1f1b16', letterSpacing: '-1px', lineHeight: 1.1, margin: '6px 0 4px' }}>₦{(stats?.total_revenue || 0).toLocaleString()}</div>
+                                                    <div style={{ fontSize: '12px', color: '#9a9188' }}>All time</div>
                                                 </div>
-                                                <h2 className="mb-0">₦{(stats?.total_revenue || 0).toLocaleString()}</h2>
-                                                <small className="opacity-75">All time</small>
+                                                <div className="d-flex align-items-center justify-content-center flex-shrink-0" style={{ width: 48, height: 48, borderRadius: 14, background: '#eafaf0', color: '#16a34a', fontSize: 21 }}>
+                                                    <i className="bi bi-cash-stack"></i>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -487,12 +468,17 @@ const AdminDashboard: React.FC = () => {
                                 {/* Recent Activity */}
                                 <div className="row g-4">
                                     <div className="col-lg-6">
-                                        <div className="card border-0 shadow-sm">
-                                            <div className="card-header bg-white border-0 py-3">
-                                                <h5 className="mb-0">Recent Users</h5>
+                                        <div className="h-100 rounded-4" style={{ background: '#fff', border: '1px solid #f0eae4', overflow: 'hidden' }}>
+                                            <div className="d-flex align-items-center justify-content-between px-4 py-3" style={{ borderBottom: '1px solid #f4efe9' }}>
+                                                <div className="d-flex align-items-center gap-2">
+                                                    <i className="bi bi-people" style={{ color: '#FF6B35' }}></i>
+                                                    <h5 className="mb-0 fw-bold" style={{ fontSize: '16px' }}>Recent Users</h5>
+                                                </div>
+                                                <button className="btn btn-sm btn-link text-decoration-none p-0" style={{ color: '#FF6B35' }} onClick={() => setActiveTab('users')}>View all</button>
                                             </div>
                                             <div className="card-body p-0">
-                                                <div className="table-responsive">
+                                                {/* Desktop table */}
+                                                <div className="table-responsive d-none d-md-block">
                                                     <table className="table table-hover mb-0">
                                                         <thead className="bg-light">
                                                             <tr>
@@ -517,7 +503,6 @@ const AdminDashboard: React.FC = () => {
                                                                         {new Date(user.created_at).toLocaleDateString()}
                                                                     </td>
                                                                     <td>
-                                                                        {/* No delete/edit in recent view to keep it clean, go to full list */}
                                                                         <button
                                                                             className="btn btn-sm btn-outline-secondary"
                                                                             onClick={() => { setActiveTab('users'); setUserSearch(user.email); }}
@@ -530,16 +515,43 @@ const AdminDashboard: React.FC = () => {
                                                         </tbody>
                                                     </table>
                                                 </div>
+
+                                                {/* Mobile card view */}
+                                                <div className="d-md-none">
+                                                    {recentUsers.map((user: any) => (
+                                                        <div key={user.id} className="d-flex align-items-center justify-content-between gap-2 px-3 py-2" style={{ borderBottom: '1px solid #f4efe9' }}>
+                                                            <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                                                                <div className="fw-semibold">{user.first_name} {user.last_name}</div>
+                                                                <div className="small text-muted text-break">{user.email}</div>
+                                                                <div className="d-flex flex-wrap align-items-center gap-2 mt-1">
+                                                                    <span className={`badge ${user.role === 'admin' ? 'bg-danger' : 'bg-primary'}`}>{user.role}</span>
+                                                                    <span className="small text-muted">Joined {new Date(user.created_at).toLocaleDateString()}</span>
+                                                                </div>
+                                                            </div>
+                                                            <button
+                                                                className="btn btn-sm btn-outline-secondary flex-shrink-0"
+                                                                onClick={() => { setActiveTab('users'); setUserSearch(user.email); }}
+                                                            >
+                                                                Manage
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="col-lg-6">
-                                        <div className="card border-0 shadow-sm">
-                                            <div className="card-header bg-white border-0 py-3">
-                                                <h5 className="mb-0">Recent Orders</h5>
+                                        <div className="h-100 rounded-4" style={{ background: '#fff', border: '1px solid #f0eae4', overflow: 'hidden' }}>
+                                            <div className="d-flex align-items-center justify-content-between px-4 py-3" style={{ borderBottom: '1px solid #f4efe9' }}>
+                                                <div className="d-flex align-items-center gap-2">
+                                                    <i className="bi bi-bag" style={{ color: '#FF6B35' }}></i>
+                                                    <h5 className="mb-0 fw-bold" style={{ fontSize: '16px' }}>Recent Orders</h5>
+                                                </div>
+                                                <button className="btn btn-sm btn-link text-decoration-none p-0" style={{ color: '#FF6B35' }} onClick={() => setActiveTab('orders')}>View all</button>
                                             </div>
                                             <div className="card-body p-0">
-                                                <div className="table-responsive">
+                                                {/* Desktop table */}
+                                                <div className="table-responsive d-none d-md-block">
                                                     <table className="table table-hover mb-0">
                                                         <thead className="bg-light">
                                                             <tr>
@@ -584,6 +596,34 @@ const AdminDashboard: React.FC = () => {
                                                         </tbody>
                                                     </table>
                                                 </div>
+
+                                                {/* Mobile card view */}
+                                                <div className="d-md-none">
+                                                    {recentOrders.map((order: any) => (
+                                                        <div key={order.id} className="d-flex align-items-center justify-content-between gap-2 px-3 py-2" style={{ borderBottom: '1px solid #f4efe9' }}>
+                                                            <div className="flex-grow-1" style={{ minWidth: 0 }}>
+                                                                <div className="fw-semibold">#{order.id}</div>
+                                                                <div className="small text-muted">
+                                                                    {order.user ? `${order.user.first_name} ${order.user.last_name}` : 'Guest'}
+                                                                </div>
+                                                                <div className="d-flex flex-wrap align-items-center gap-2 mt-1">
+                                                                    <span className="text-success fw-semibold">₦{(order.total_amount || 0).toLocaleString()}</span>
+                                                                    <span className={`badge ${order.status === 'delivered' ? 'bg-success' :
+                                                                        order.status === 'pending' ? 'bg-warning' :
+                                                                            order.status === 'processing' ? 'bg-info' :
+                                                                                'bg-secondary'
+                                                                        }`}>
+                                                                        {order.status === 'delivering' ? 'On Route' : order.status}
+                                                                    </span>
+                                                                    <span className="small text-muted">{new Date(order.created_at).toLocaleDateString()}</span>
+                                                                </div>
+                                                            </div>
+                                                            <button className="btn btn-sm btn-outline-primary flex-shrink-0" onClick={() => handleViewOrder(order.id)}>
+                                                                View
+                                                            </button>
+                                                        </div>
+                                                    ))}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -594,8 +634,8 @@ const AdminDashboard: React.FC = () => {
                         {/* Products Tab */}
                         {activeTab === 'products' && (
                             <div>
-                                <div className="d-flex justify-content-between align-items-center mb-4">
-                                    <h3>Product Management</h3>
+                                <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+                                    <h3 className="mb-0">Product Management</h3>
                                     <button
                                         className="btn btn-primary"
                                         onClick={() => {
@@ -704,7 +744,7 @@ const AdminDashboard: React.FC = () => {
                                                     </div>
                                                     <div className="col-12">
                                                         <label className="form-label fw-bold">Display Sections</label>
-                                                        <div className="d-flex gap-4">
+                                                        <div className="d-flex flex-wrap gap-3">
                                                             <div className="form-check">
                                                                 <input
                                                                     className="form-check-input"
@@ -880,9 +920,9 @@ const AdminDashboard: React.FC = () => {
                         {/* Users Tab */}
                         {activeTab === 'users' && (
                             <div>
-                                <div className="d-flex justify-content-between align-items-center mb-4">
-                                    <h3>User Management</h3>
-                                    <div className="input-group" style={{ maxWidth: '300px' }}>
+                                <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+                                    <h3 className="mb-0">User Management</h3>
+                                    <div className="input-group flex-grow-1" style={{ maxWidth: '300px' }}>
                                         <input
                                             type="text"
                                             className="form-control"
@@ -1002,8 +1042,8 @@ const AdminDashboard: React.FC = () => {
                         {/* Orders Tab */}
                         {activeTab === 'orders' && (
                             <div>
-                                <div className="d-flex justify-content-between align-items-center mb-4">
-                                    <h3>Order Management</h3>
+                                <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+                                    <h3 className="mb-0">Order Management</h3>
                                     <select
                                         className="form-select"
                                         style={{ maxWidth: '200px' }}
@@ -1147,8 +1187,8 @@ const AdminDashboard: React.FC = () => {
                         {/* Banks Tab */}
                         {activeTab === 'banks' && (
                             <div>
-                                <div className="d-flex justify-content-between align-items-center mb-4">
-                                    <h3>Bank Accounts</h3>
+                                <div className="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-4">
+                                    <h3 className="mb-0">Bank Accounts</h3>
                                     <button
                                         className="btn btn-primary"
                                         onClick={() => setShowBankForm(true)}
@@ -1234,7 +1274,9 @@ const AdminDashboard: React.FC = () => {
                         {activeTab === 'messages' && (
                             <div>
                                 <h3 className="mb-4">Contact Messages</h3>
-                                <div className="card border-0 shadow-sm">
+
+                                {/* Desktop Table View */}
+                                <div className="card border-0 shadow-sm d-none d-md-block">
                                     <div className="card-body p-0">
                                         <div className="table-responsive">
                                             <table className="table table-hover mb-0">
@@ -1282,6 +1324,42 @@ const AdminDashboard: React.FC = () => {
                                         </div>
                                     </div>
                                 </div>
+
+                                {/* Mobile Card View */}
+                                <div className="d-md-none">
+                                    {messages.map((msg) => (
+                                        <div key={msg.id} className="card border-0 shadow-sm mb-3">
+                                            <div className="card-body p-3">
+                                                <div className="d-flex justify-content-between align-items-start mb-2">
+                                                    <div>
+                                                        <div className="fw-bold">{msg.name}</div>
+                                                        <a href={`mailto:${msg.email}`} className="small text-decoration-none">{msg.email}</a>
+                                                    </div>
+                                                    {!msg.is_read && <span className="badge bg-primary">New</span>}
+                                                </div>
+                                                <div className="small text-muted mb-2">{new Date(msg.created_at).toLocaleString()}</div>
+                                                <div className="mb-3" style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word' }}>{msg.message}</div>
+                                                <div className="d-flex justify-content-end">
+                                                    {!msg.is_read && (
+                                                        <button
+                                                            className="btn btn-sm btn-outline-primary w-100"
+                                                            onClick={async () => {
+                                                                await contactService.markAsRead(msg.id, localStorage.getItem('access_token') || '');
+                                                                setMessages(messages.map(m => m.id === msg.id ? { ...m, is_read: true } : m));
+                                                                toast.success('Marked as read');
+                                                            }}
+                                                        >
+                                                            Mark Read
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                    {messages.length === 0 && (
+                                        <p className="text-center py-4 text-muted">No messages found.</p>
+                                    )}
+                                </div>
                             </div>
                         )}
                     </>
@@ -1290,8 +1368,8 @@ const AdminDashboard: React.FC = () => {
 
             {/* Order Details Modal */}
             {showOrderModal && selectedOrder && (
-                <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-                    <div className="modal-dialog modal-lg">
+                <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)', overflowY: 'auto' }}>
+                    <div className="modal-dialog modal-lg modal-dialog-scrollable my-2 mx-auto">
                         <div className="modal-content">
                             <div className="modal-header">
                                 <h5 className="modal-title">Order Details #{selectedOrder.id}</h5>
@@ -1370,8 +1448,8 @@ const AdminDashboard: React.FC = () => {
                                     </table>
                                 </div>
                             </div>
-                            <div className="modal-footer justify-content-between">
-                                <div>
+                            <div className="modal-footer flex-wrap gap-2">
+                                <div className="d-flex flex-wrap gap-2">
                                     {selectedOrder.status !== 'delivered' && selectedOrder.status !== 'cancelled' && (
                                         <div className="dropdown d-inline-block me-2">
                                             <button className="btn btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
