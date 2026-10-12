@@ -14,7 +14,8 @@ if settings.DATABASE_URL.startswith("sqlite:///"):
             os.makedirs(dirname, exist_ok=True)
 
 # Create database engine
-engine = create_engine(settings.DATABASE_URL)
+# pool_pre_ping helps recover from stale PostgreSQL connections in production.
+engine = create_engine(settings.DATABASE_URL, pool_pre_ping=True)
 
 # Create session factory
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
